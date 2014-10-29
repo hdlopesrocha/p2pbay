@@ -85,7 +85,7 @@ public class P2PBay {
 		bindings.addInterface("wlan0");
 		bindings.addInterface("lo");
 
-        peer = new PeerMaker(new Number160(random)).setPorts(myPeerPort).setBindings(bindings).makeAndListen();
+        peer = new PeerMaker(new Number160(random)).setPorts(myPeerPort).setBindings(bindings).setEnableIndirectReplication(true).makeAndListen();
         peer.getConfiguration().setBehindFirewall(true);
         
         if(argExists("-i",args)){
