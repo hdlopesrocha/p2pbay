@@ -185,6 +185,7 @@ public class P2PBay {
 			}
 		}
 		System.out.println("Authentication Success!");
+		System.out.println("cenas!");
 		scanner.close();
 	}
 	
