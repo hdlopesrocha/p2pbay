@@ -11,6 +11,8 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Random;
 import java.util.Scanner;
 
+import org.json.JSONObject;
+
 import net.tomp2p.connection.Bindings;
 import net.tomp2p.futures.FutureDHT;
 import net.tomp2p.futures.FutureDiscover;
@@ -128,8 +130,10 @@ public class P2PBay {
 			String[] splits = line.split(":");
 			String salt = randomString(16);
 			String hash = sha1(salt + splits[1]);
-
-			store("user:" + splits[0], salt + ":" + hash);
+			JSONObject obj = new JSONObject();
+			obj.put("salt", salt);
+			obj.put("hash", hash);
+			store("user:" + splits[0], obj.toString());
 		}
 
 		reader.close();
@@ -168,7 +172,8 @@ public class P2PBay {
 	 *             Signals that an I/O exception has occurred.
 	 */
 	private static void store(String key, Object value) throws IOException {
-		peer.put(Number160.createHash(key)).setData(new Data(value).setTTLSeconds(30)).start()
+		peer.put(Number160.createHash(key))
+				.setData(new Data(value).setTTLSeconds(30)).start()
 				.awaitUninterruptibly();
 	}
 
@@ -223,9 +228,8 @@ public class P2PBay {
 	 */
 	public static void commandLine() {
 		Scanner scanner = new Scanner(System.in);
-		Boolean authenticated = false;
 
-		while (!authenticated) {
+		while (true) {
 
 			System.out.print("Username: ");
 			String username = scanner.nextLine();
@@ -236,24 +240,53 @@ public class P2PBay {
 			try {
 				String saltPlusHash = (String) get("user:" + username);
 				if (saltPlusHash != null) {
-					String[] splits = saltPlusHash.split(":");
-					if (splits.length == 2) {
-						String salt = splits[0];
-						String hash = splits[1];
+					JSONObject obj = new JSONObject(saltPlusHash);
+					String salt = obj.getString("salt");
+					String hash = obj.getString("hash");
 
-						if (sha1(salt + password).equals(hash)) {
-							authenticated = true;
-						}
+					if (sha1(salt + password).equals(hash)) {
+						break;
 					}
-				} else {
-					System.err.println("Authentication failed!");
 				}
+				
 			} catch (ClassNotFoundException | IOException e) {
 				e.printStackTrace();
 			}
+			System.err.println("Authentication failed!");
+			
 		}
-		System.out.println("Authentication Success!");
-		System.out.println("cenas!");
+		System.out.println("Authentication Succeded!");
+
+		while (true) {
+			System.out.println("\t1) offer an item for sale");
+			System.out.println("\t2) accept a bid");
+			System.out.println("\t3) search for an item to buy");
+			System.out.println("\t4) bid on an item");
+			System.out.println("\t5) view the details of an item");
+			System.out.println("\t6) view purchase and bidding history");
+			System.out.println("\t0) quit");
+			System.out.print("\toption: ");
+			int option = scanner.nextInt();
+			if (option == 1) {
+
+			} else if (option == 2) {
+
+			} else if (option == 3) {
+
+			} else if (option == 4) {
+
+			} else if (option == 5) {
+
+			} else if (option == 6) {
+
+			} else if (option == 0) {
+				break;
+			} else {
+				System.out.println("Option not found!");
+			}
+		}
+
+		System.out.println("See you next time!");
 		scanner.close();
 	}
 
