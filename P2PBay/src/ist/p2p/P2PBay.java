@@ -8,10 +8,11 @@ import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
-
-import org.json.JSONObject;
+import java.util.UUID;
 
 import net.tomp2p.connection.Bindings;
 import net.tomp2p.futures.FutureDHT;
@@ -20,6 +21,9 @@ import net.tomp2p.p2p.Peer;
 import net.tomp2p.p2p.PeerMaker;
 import net.tomp2p.peers.Number160;
 import net.tomp2p.storage.Data;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -151,12 +155,16 @@ public class P2PBay {
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	private static Object get(String key) throws ClassNotFoundException,
-			IOException {
-		FutureDHT futureDHT = peer.get(Number160.createHash(key)).start();
-		futureDHT.awaitUninterruptibly();
-		if (futureDHT.isSuccess()) {
-			return futureDHT.getData().getObject();
+	private static Object get(String key) {
+		try {
+			FutureDHT futureDHT = peer.get(Number160.createHash(key)).start();
+			futureDHT.awaitUninterruptibly();
+			if (futureDHT.isSuccess()) {
+				return futureDHT.getData().getObject();
+			}
+		} catch (IOException | ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		return null;
 	}
@@ -171,12 +179,44 @@ public class P2PBay {
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	private static void store(String key, Object value) throws IOException {
-		peer.put(Number160.createHash(key))
-				.setData(new Data(value).setTTLSeconds(30)).start()
-				.awaitUninterruptibly();
+	private static void store(String key, Object value) {
+
+		try {
+			peer.put(Number160.createHash(key))
+					.setData(new Data(value).setTTLSeconds(30)).start()
+					.awaitUninterruptibly();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
+	
+	/**
+	 * Store.
+	 *
+	 * @param key
+	 *            the key
+	 * @param value
+	 *            the value
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
+	private static void replace(String key, Object value) {
+
+		Number160 hash = Number160.createHash(key);
+		try {
+			peer.remove(hash);
+			peer.put(hash)
+				.setData(new Data(value).setTTLSeconds(30)).start()
+				.awaitUninterruptibly();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	
 	// -i ip:port of known peer (bootstrap if not exists)
 	// -u loads users file
 
@@ -228,32 +268,28 @@ public class P2PBay {
 	 */
 	public static void commandLine() {
 		Scanner scanner = new Scanner(System.in);
-
+		String username = "";
 		while (true) {
 
 			System.out.print("Username: ");
-			String username = scanner.nextLine();
+			username = scanner.nextLine();
 
 			System.out.print("Password: ");
 			String password = scanner.nextLine();
 
-			try {
-				String saltPlusHash = (String) get("user:" + username);
-				if (saltPlusHash != null) {
-					JSONObject obj = new JSONObject(saltPlusHash);
-					String salt = obj.getString("salt");
-					String hash = obj.getString("hash");
+			String saltPlusHash = (String) get("user:" + username);
+			if (saltPlusHash != null) {
+				JSONObject obj = new JSONObject(saltPlusHash);
+				String salt = obj.getString("salt");
+				String hash = obj.getString("hash");
 
-					if (sha1(salt + password).equals(hash)) {
-						break;
-					}
+				if (sha1(salt + password).equals(hash)) {
+					break;
 				}
-				
-			} catch (ClassNotFoundException | IOException e) {
-				e.printStackTrace();
 			}
+
 			System.err.println("Authentication failed!");
-			
+
 		}
 		System.out.println("Authentication Succeded!");
 
@@ -266,13 +302,13 @@ public class P2PBay {
 			System.out.println("\t6) view purchase and bidding history");
 			System.out.println("\t0) quit");
 			System.out.print("\toption: ");
-			int option = scanner.nextInt();
+			int option = Integer.valueOf( scanner.nextLine());
 			if (option == 1) {
-
+				offerAnItemMenu(username, scanner);
 			} else if (option == 2) {
 
 			} else if (option == 3) {
-
+				searchAnItemMenu(username, scanner);
 			} else if (option == 4) {
 
 			} else if (option == 5) {
@@ -290,4 +326,51 @@ public class P2PBay {
 		scanner.close();
 	}
 
+	public static void offerAnItemMenu(String username, Scanner scanner) {
+
+		System.out.print("title: ");
+		String title = scanner.nextLine();
+		System.out.print("description: ");
+		String description = scanner.nextLine();
+
+		if (title != null && description != null && !title.isEmpty()
+				&& !description.isEmpty()) {
+
+			String uuid = UUID.randomUUID().toString();
+			String key = "product:" + uuid;
+			JSONObject obj = new JSONObject();
+			obj.put("owner", username);
+			obj.put("title", title);
+			obj.put("description", description);
+			store(key, obj.toString());
+			
+			for(String token : title.split(" ")){
+				String existingIndex = (String) get("index:"+token);
+				JSONArray array = existingIndex == null ? new JSONArray() : new JSONArray(existingIndex);
+				array.put(key);
+				replace("index:"+token, array.toString());
+			}
+		} else {
+			System.out.println("Invalid Parameters!");
+		}
+
+	}
+
+	
+	public static void searchAnItemMenu(String username, Scanner scanner) {
+
+		System.out.print("search: ");
+		String search = scanner.nextLine();
+		String res = (String) get("index:"+search);
+		if(res!=null){
+			JSONArray array = new JSONArray(res);
+			for(int i=0;i < array.length() ; ++i){
+				String product = (String) get(array.getString(i));
+				if(product!= null){
+					System.out.println(product);
+				}
+			}
+		}
+	}
+	
 }
