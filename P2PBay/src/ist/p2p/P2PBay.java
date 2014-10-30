@@ -168,7 +168,7 @@ public class P2PBay {
 	 *             Signals that an I/O exception has occurred.
 	 */
 	private static void store(String key, Object value) throws IOException {
-		peer.put(Number160.createHash(key)).setData(new Data(value)).start()
+		peer.put(Number160.createHash(key)).setData(new Data(value).setTTLSeconds(30)).start()
 				.awaitUninterruptibly();
 	}
 
@@ -215,9 +215,7 @@ public class P2PBay {
 		}
 
 		System.out.println("***********************");
-
 		commandLine();
-
 	}
 
 	/**
