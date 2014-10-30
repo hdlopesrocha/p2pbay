@@ -1,0 +1,74 @@
+\documentclass[a4paper]{article}
+
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage[colorinlistoftodos]{todonotes}
+
+\title{P2PBay}
+
+\author{Henrique Rocha 68621\\
+Ângelo Pingo 72413\\
+Pedro Braz 73991}
+
+\date{\today}
+
+\begin{document}
+\maketitle
+
+
+
+\section{Introduction}
+ P2PBay is a peer-to-peer application that allows clients to auction items over an internet-scale network, which is scalable, secure, supports highly volatile users and doesn't require a centralized server. 
+
+\section{Requirements}
+	The application needs to provide a command line interface for its clients, that allows:  
+    \begin{itemize}
+        \item User authentication without a secure server;
+        \item Item auctioning;
+        \item Item bidding;
+        \item Item searching with keywords: \textit{not}, \textit{and} \& \textit{or};
+        \item Users to check all their application history: biddings and purchases.
+    \end{itemize}
+    For managing the app, a specific p2p node will take care of gathering statistics across the network, this node isn't required to be avaliable for the applications to work correctly. It will have to provide information on the number of nodes running, the number of registered users and the number of items on sale.
+
+
+
+\section{Protocol Specification}
+
+\subsection{Distributed Hash Table}
+	Our protocol is going to work on top of a Kademlia DHT, which will take care of building the network and information routing. The specific library chosen is the java implementation TomP2P.
+
+\subsubsection{TomP2P}
+	TomP2P provides all Kademlia features, using the same 160 bit identifier space and a XOR based algorithm to define distance between nodes. It implements future objects that are used to make non-blocking requests, which increase peer availability, when connected to the network and It will also allow us to have data encryption and replication.
+   
+\subsubsection{TomP2P Shortcomings}
+    Tomp2p doesn't provide some features that are required by the applications, but it provides the tools to make them work.
+\begin{itemize}
+    	\item \textbf{User authentication}: this will be a problem in most p2p environments, because there is no trustworthy server. Password information will need to be checked by a node inside the network, and there is no simple way to ascertain if the node has evil intentions or not. It's hash and salt will be replicated to other nodes and any of those will be able to crack the hash.
+    \item \textbf{Item searching}: kademlia searching is based on hashing, if we wanted to look for something we would need the correct hash. There is no direct way to look for specific values that are part of the hash.
+\end{itemize}
+
+   
+\subsubsection{Other DHTs}
+	--what is similar with other DHTs
+	\\--what we could do with other DHTs
+	\\--why every other choice sucks
+
+
+\subsection{P2PBay}
+	--how new user starts\\
+    --how user login is done\\
+    --how items are created\\
+    --how to search\\
+    --how to bid\\
+    --how are differentiated (auth: and file:)\\ 
+    --how to deal with concurrency\\
+    --how to dead with documents timing out (republish)
+
+\subsubsection{Protocol Testing}
+
+
+
+\end{document}
