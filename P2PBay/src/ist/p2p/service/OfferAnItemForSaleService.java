@@ -37,17 +37,17 @@ public class OfferAnItemForSaleService extends P2PBayService<Boolean> {
 				&& !item.getTitle().isEmpty()
 				&& !item.getDescription().isEmpty()) {
 
-			String uuid = UUID.randomUUID().toString();
-			String key = "product:" + uuid;
+			final String uuid = UUID.randomUUID().toString();
+			final String key = "product:" + uuid;
 			put(key, item);
 			
-			HashSet<String> uniqueTokens = new HashSet<String>();
+			final HashSet<String> uniqueTokens = new HashSet<String>();
 			for (String token : item.getTitle().split(" ")) {
 				uniqueTokens.add(token);
 			}
 			
 			for (String token : uniqueTokens) {
-				List<String> existingIndexs = (List<String>) get("index:" + token);
+				List<String> existingIndexs =  (List<String>) get("index:" + token);
 				
 				if(existingIndexs == null)
 					existingIndexs = new ArrayList<String>();

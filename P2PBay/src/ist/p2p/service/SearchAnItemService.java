@@ -31,13 +31,11 @@ public class SearchAnItemService extends P2PBayService<List<ItemDto>> {
 	 */
 	@Override
 	public List<ItemDto> execute() {
-		List<ItemDto> items = new ArrayList<ItemDto>();
-
-		
-		List<String> indexs  = (List<String>) get("index:" + search);
+		final List<ItemDto> items = new ArrayList<ItemDto>();
+		final List<String> indexs  = (List<String>) get("index:" + search);
 		if (indexs != null) {
 			for (String key : indexs) {
-				ItemDto product = (ItemDto) get(key);
+				final ItemDto product = (ItemDto) get(key);
 				if (product != null) {
 					items.add(product);
 				}

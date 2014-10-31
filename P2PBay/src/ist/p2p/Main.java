@@ -35,7 +35,8 @@ public class Main {
 
 		while ((line = reader.readLine()) != null) {
 			String[] splits = line.split(":");
-			RegisterUserService service = new RegisterUserService(splits[0], splits[1]);
+			RegisterUserService service = new RegisterUserService(splits[0],
+					splits[1]);
 			service.execute();
 		}
 		reader.close();
@@ -53,14 +54,14 @@ public class Main {
 	 *             Signals that an I/O exception has occurred.
 	 */
 	public static void main(String[] args) throws IOException {
-		
+
 		ConnectP2PBayService service;
 		String ip = Utils.getArgValue("-i", args);
-		if(ip!=null){
-			String [] splits = ip.split(":");
-			service = new ConnectP2PBayService(splits[0], Integer.valueOf(splits[1]));
-		}
-		else {
+		if (ip != null) {
+			String[] splits = ip.split(":");
+			service = new ConnectP2PBayService(splits[0],
+					Integer.valueOf(splits[1]));
+		} else {
 			service = new ConnectP2PBayService();
 		}
 		service.execute();
@@ -70,16 +71,18 @@ public class Main {
 			loadUsersFile(usersFileName);
 		}
 		Scanner scanner = new Scanner(System.in);
-
-		while(true){
+		while (true) {
 			commandLine(scanner);
 		}
-		//scanner.close();
+		// scanner.close();
 
 	}
 
 	/**
 	 * Command line.
+	 *
+	 * @param scanner
+	 *            the scanner
 	 */
 	public static void commandLine(Scanner scanner) {
 		System.out.println("***********************");
@@ -108,30 +111,29 @@ public class Main {
 			System.out.println("\t4) bid on an item");
 			System.out.println("\t5) view the details of an item");
 			System.out.println("\t6) view purchase and bidding history");
-			System.out.println("\t0) quit");
+			System.out.println("\t0) logout");
 			System.out.print("\toption: ");
-			
+
 			try {
 				int option = Integer.valueOf(scanner.nextLine());
 				if (option == 1) {
 					offerAnItemMenu(username, scanner);
 				} else if (option == 2) {
-	
+
 				} else if (option == 3) {
 					searchAnItemMenu(username, scanner);
 				} else if (option == 4) {
-	
+
 				} else if (option == 5) {
-	
+
 				} else if (option == 6) {
-	
+
 				} else if (option == 0) {
 					break;
 				} else {
 					System.out.println("Option not found!");
 				}
-			}
-			catch(NumberFormatException e){
+			} catch (NumberFormatException e) {
 				System.out.println("Invalid option!");
 			}
 		}
