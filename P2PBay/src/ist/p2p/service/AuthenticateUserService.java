@@ -36,8 +36,7 @@ public class AuthenticateUserService extends P2PBayService<Boolean> {
 	 */
 	@Override
 	public Boolean execute() {
-		final String usernamePassHash = Utils.sha1(username+":"+password);
-		final String saltPlusHash = (String) get("user:" + usernamePassHash);
+		final String saltPlusHash = (String) get("user:" + username);
 		if (saltPlusHash != null) {
 			final JSONObject obj = new JSONObject(saltPlusHash);
 			final String salt = obj.getString("salt");
