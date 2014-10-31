@@ -55,7 +55,6 @@ public class Main {
 	 *             Signals that an I/O exception has occurred.
 	 */
 	public static void main(String[] args) throws IOException {
-		String usersFileName = Utils.getArgValue("-u", args);
 		
 		ConnectP2PBayService service;
 		String ip = Utils.getArgValue("-i", args);
@@ -67,6 +66,8 @@ public class Main {
 			service = new ConnectP2PBayService();
 		}
 		service.execute();
+
+		String usersFileName = Utils.getArgValue("-u", args);
 		if (usersFileName != null) {
 			loadUsersFile(usersFileName);
 		}

@@ -18,10 +18,10 @@ public abstract class P2PBayService<T>  {
 	public abstract T execute();
 	
 	/** The peer. */
-	static private Peer peer = null;
+	static protected Peer peer = null;
 	
 	
-	public static void connect(String ip, int port) throws IOException{
+	protected static void connect(String ip, int port) throws IOException{
 		Random random = new Random();
 		int myPeerPort = ip==null ? 1024 : 1025 + random
 				.nextInt(60000);
@@ -55,7 +55,7 @@ public abstract class P2PBayService<T>  {
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	public static Object get(String key) {
+	protected static Object get(String key) {
 		try {
 			FutureDHT futureDHT = peer.get(Number160.createHash(key)).start();
 			futureDHT.awaitUninterruptibly();
@@ -80,7 +80,7 @@ public abstract class P2PBayService<T>  {
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	public static void store(String key, Object value) {
+	protected static void store(String key, Object value) {
 
 		try {
 			peer.put(Number160.createHash(key))
@@ -103,7 +103,7 @@ public abstract class P2PBayService<T>  {
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	public static void replace(String key, Object value) {
+	protected static void replace(String key, Object value) {
 
 		Number160 hash = Number160.createHash(key);
 		try {
