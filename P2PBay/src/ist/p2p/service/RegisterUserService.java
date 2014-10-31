@@ -38,11 +38,12 @@ public class RegisterUserService extends P2PBayService<Boolean> {
 	@Override
 	public Boolean execute() {
 		String salt = Utils.randomString(16);
+		String usernamePassHash = Utils.sha1(username+":"+password);
 		String hash = Utils.sha1(salt + password);
 		JSONObject obj = new JSONObject();
 		obj.put("salt", salt);
 		obj.put("hash", hash);
-		store("user:" + username, obj.toString());
+		store("user:" + usernamePassHash, obj.toString());
 		return true;
 	}
 

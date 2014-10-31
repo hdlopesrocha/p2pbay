@@ -42,6 +42,7 @@ public abstract class P2PBayService<T>  {
 					.setInetAddress(address).setPorts(port).start();
 			futureDiscover.awaitUninterruptibly();
 		}
+		System.out.println("*** PORT "+myPeerPort+" ***");
 	}
 	
 	/**

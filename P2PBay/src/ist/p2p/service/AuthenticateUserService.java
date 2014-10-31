@@ -24,7 +24,7 @@ public class AuthenticateUserService extends P2PBayService<Boolean> {
 	 * @param password
 	 *            the password
 	 */
-	public AuthenticateUserService(String username, String password) {
+	public AuthenticateUserService(final String username, final String password) {
 		this.username = username;
 		this.password = password;
 	}
@@ -36,11 +36,12 @@ public class AuthenticateUserService extends P2PBayService<Boolean> {
 	 */
 	@Override
 	public Boolean execute() {
-		String saltPlusHash = (String) get("user:" + username);
+		final String usernamePassHash = Utils.sha1(username+":"+password);
+		final String saltPlusHash = (String) get("user:" + usernamePassHash);
 		if (saltPlusHash != null) {
-			JSONObject obj = new JSONObject(saltPlusHash);
-			String salt = obj.getString("salt");
-			String hash = obj.getString("hash");
+			final JSONObject obj = new JSONObject(saltPlusHash);
+			final String salt = obj.getString("salt");
+			final String hash = obj.getString("hash");
 			if (Utils.sha1(salt + password).equals(hash)) {
 				return true;
 			}
