@@ -19,6 +19,13 @@ public class AuthenticationDto implements Serializable {
 
 	/**
 	 * Instantiates a new authentication dto.
+	 */
+	public AuthenticationDto() {
+		super();
+	}
+
+	/**
+	 * Instantiates a new authentication dto.
 	 *
 	 * @param salt
 	 *            the salt

@@ -3,8 +3,6 @@ package ist.p2p.service;
 import ist.p2p.Utils;
 import ist.p2p.dto.AuthenticationDto;
 
-import org.json.JSONObject;
-
 // TODO: Auto-generated Javadoc
 /**
  * The Class AuthenticateUserService.

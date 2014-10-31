@@ -38,9 +38,7 @@ public class Main {
 			RegisterUserService service = new RegisterUserService(splits[0], splits[1]);
 			service.execute();
 		}
-
 		reader.close();
-
 	}
 
 	// -i ip:port of known peer (bootstrap if not exists)
@@ -71,15 +69,20 @@ public class Main {
 		if (usersFileName != null) {
 			loadUsersFile(usersFileName);
 		}
-		commandLine();
+		Scanner scanner = new Scanner(System.in);
+
+		while(true){
+			commandLine(scanner);
+		}
+		//scanner.close();
+
 	}
 
 	/**
 	 * Command line.
 	 */
-	public static void commandLine() {
+	public static void commandLine(Scanner scanner) {
 		System.out.println("***********************");
-		Scanner scanner = new Scanner(System.in);
 		String username = "";
 		while (true) {
 
@@ -134,7 +137,6 @@ public class Main {
 		}
 
 		System.out.println("See you next time!");
-		scanner.close();
 	}
 
 	/**

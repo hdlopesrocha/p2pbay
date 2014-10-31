@@ -1,6 +1,7 @@
 package ist.p2p.dto;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -8,9 +9,7 @@ import java.io.Serializable;
  */
 public class ItemDto implements Serializable {
 
-	/**
-	 * 
-	 */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -7647175142472873433L;
 
 	/** The owner. */
@@ -21,6 +20,16 @@ public class ItemDto implements Serializable {
 
 	/** The description. */
 	private String description;
+
+	/** The description. */
+	private String id;
+
+	/**
+	 * Instantiates a new item dto.
+	 */
+	public ItemDto() {
+		super();
+	}
 
 	/**
 	 * Instantiates a new item dto.
@@ -37,8 +46,8 @@ public class ItemDto implements Serializable {
 		this.owner = owner;
 		this.title = title;
 		this.description = description;
+		this.id = UUID.randomUUID().toString();
 	}
-
 
 	/**
 	 * Gets the owner.
@@ -59,6 +68,15 @@ public class ItemDto implements Serializable {
 	}
 
 	/**
+	 * Gets the id.
+	 *
+	 * @return the id
+	 */
+	public String getId() {
+		return id;
+	}
+
+	/**
 	 * Gets the description.
 	 *
 	 * @return the description
@@ -67,8 +85,13 @@ public class ItemDto implements Serializable {
 		return description;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
 	public String toString() {
-		return title+":"+description;
+		return "{id:"+id+", title:'"+title+"', decription:'"+description + "'}";
 	}
-	
+
 }
