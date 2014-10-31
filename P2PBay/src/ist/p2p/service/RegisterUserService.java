@@ -1,6 +1,5 @@
 package ist.p2p.service;
 
-import ist.p2p.P2PBay;
 import ist.p2p.Utils;
 
 import org.json.JSONObject;
@@ -9,7 +8,7 @@ import org.json.JSONObject;
 /**
  * The Class RegisterUserService.
  */
-public class RegisterUserService implements P2PBayService<Boolean> {
+public class RegisterUserService extends P2PBayService<Boolean> {
 
 	/** The username. */
 	private String username;
@@ -43,7 +42,7 @@ public class RegisterUserService implements P2PBayService<Boolean> {
 		JSONObject obj = new JSONObject();
 		obj.put("salt", salt);
 		obj.put("hash", hash);
-		P2PBay.store("user:" + username, obj.toString());
+		store("user:" + username, obj.toString());
 		return true;
 	}
 

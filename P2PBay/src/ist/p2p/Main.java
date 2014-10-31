@@ -2,6 +2,7 @@ package ist.p2p;
 
 import ist.p2p.dto.ItemDto;
 import ist.p2p.service.AuthenticateUserService;
+import ist.p2p.service.ConnectP2PBayService;
 import ist.p2p.service.OfferAnItemForSaleService;
 import ist.p2p.service.RegisterUserService;
 import ist.p2p.service.SearchAnItemService;
@@ -55,7 +56,17 @@ public class Main {
 	 */
 	public static void main(String[] args) throws IOException {
 		String usersFileName = Utils.getArgValue("-u", args);
-		P2PBay.connect(args);
+		
+		ConnectP2PBayService service;
+		String ip = Utils.getArgValue("-i", args);
+		if(ip!=null){
+			String [] splits = ip.split(":");
+			service = new ConnectP2PBayService(splits[0], Integer.valueOf(splits[1]));
+		}
+		else {
+			service = new ConnectP2PBayService();
+		}
+		service.execute();
 		if (usersFileName != null) {
 			loadUsersFile(usersFileName);
 		}

@@ -1,6 +1,5 @@
 package ist.p2p.service;
 
-import ist.p2p.P2PBay;
 import ist.p2p.dto.ItemDto;
 
 import java.util.ArrayList;
@@ -13,7 +12,7 @@ import org.json.JSONObject;
 /**
  * The Class SearchItemService.
  */
-public class SearchAnItemService implements P2PBayService<List<ItemDto>> {
+public class SearchAnItemService extends P2PBayService<List<ItemDto>> {
 
 	/** The search. */
 	private String search;
@@ -37,11 +36,11 @@ public class SearchAnItemService implements P2PBayService<List<ItemDto>> {
 	public List<ItemDto> execute() {
 		List<ItemDto> items = new ArrayList<ItemDto>();
 
-		String res = (String) P2PBay.get("index:" + search);
+		String res = (String) get("index:" + search);
 		if (res != null) {
 			JSONArray array = new JSONArray(res);
 			for (int i = 0; i < array.length(); ++i) {
-				String product = (String) P2PBay.get(array.getString(i));
+				String product = (String) get(array.getString(i));
 				if (product != null) {
 					items.add(new ItemDto(new JSONObject(product)));
 				}
