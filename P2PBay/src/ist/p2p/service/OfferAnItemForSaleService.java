@@ -5,7 +5,6 @@ import ist.p2p.dto.ItemDto;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.UUID;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -46,6 +45,7 @@ public class OfferAnItemForSaleService extends P2PBayService<Boolean> {
 			}
 			
 			for (String token : uniqueTokens) {
+				@SuppressWarnings("unchecked")
 				List<String> existingIndexs =  (List<String>) get("index:" + token);
 				
 				if(existingIndexs == null)

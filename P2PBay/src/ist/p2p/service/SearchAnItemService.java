@@ -32,6 +32,7 @@ public class SearchAnItemService extends P2PBayService<List<ItemDto>> {
 	@Override
 	public List<ItemDto> execute() {
 		final List<ItemDto> items = new ArrayList<ItemDto>();
+		@SuppressWarnings("unchecked")
 		final List<String> indexs  = (List<String>) get("index:" + search);
 		if (indexs != null) {
 			for (String key : indexs) {
