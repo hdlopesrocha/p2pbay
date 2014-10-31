@@ -3,6 +3,7 @@ package ist.p2p;
 import ist.p2p.dto.ItemDto;
 import ist.p2p.service.AuthenticateUserService;
 import ist.p2p.service.ConnectP2PBayService;
+import ist.p2p.service.GetItemByIdService;
 import ist.p2p.service.OfferAnItemForSaleService;
 import ist.p2p.service.RegisterUserService;
 import ist.p2p.service.SearchAnItemService;
@@ -93,9 +94,9 @@ public class Main {
 			username = scanner.nextLine();
 
 			System.out.print("Password: ");
-			String password = scanner.nextLine();
+			final String password = scanner.nextLine();
 
-			AuthenticateUserService service = new AuthenticateUserService(
+			final AuthenticateUserService service = new AuthenticateUserService(
 					username, password);
 			if (service.execute() == true) {
 				break;
@@ -115,19 +116,19 @@ public class Main {
 			System.out.print("\toption: ");
 
 			try {
-				int option = Integer.valueOf(scanner.nextLine());
+				final int option = Integer.valueOf(scanner.nextLine());
 				if (option == 1) {
 					offerAnItemMenu(username, scanner);
 				} else if (option == 2) {
-
+					acceptABidMenu(username, scanner);
 				} else if (option == 3) {
 					searchAnItemMenu(username, scanner);
 				} else if (option == 4) {
-
+					searchAnItemMenu(username, scanner);
 				} else if (option == 5) {
-
+					viewItemDetailsMenu(username, scanner);
 				} else if (option == 6) {
-
+					viewHistoryMenu(username, scanner);
 				} else if (option == 0) {
 					break;
 				} else {
@@ -141,6 +142,28 @@ public class Main {
 		System.out.println("See you next time!");
 	}
 
+	private static void viewHistoryMenu(String username, Scanner scanner) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private static void viewItemDetailsMenu(String username, Scanner scanner) {
+		System.out.print("id: ");
+		final String id = scanner.nextLine();
+		final GetItemByIdService service = new GetItemByIdService(id);
+		final ItemDto result = service.execute();
+		if(result!=null){
+			System.out.println(result);
+		}
+		else {
+			System.out.println("Item not found!");
+		}
+	}
+	private static void acceptABidMenu(String username, Scanner scanner) {
+		// TODO Auto-generated method stub
+		
+	}
+
 	/**
 	 * Offer an item menu.
 	 *
@@ -152,12 +175,12 @@ public class Main {
 	public static void offerAnItemMenu(String username, Scanner scanner) {
 
 		System.out.print("title: ");
-		String title = scanner.nextLine();
+		final String title = scanner.nextLine();
 		System.out.print("description: ");
-		String description = scanner.nextLine();
-		ItemDto newItem = new ItemDto(username, title, description);
+		final String description = scanner.nextLine();
+		final ItemDto newItem = new ItemDto(username, title, description);
 
-		OfferAnItemForSaleService service = new OfferAnItemForSaleService(
+		final OfferAnItemForSaleService service = new OfferAnItemForSaleService(
 				newItem);
 		if (service.execute()) {
 			System.out.println("Offered item with success!");
@@ -177,10 +200,10 @@ public class Main {
 	public static void searchAnItemMenu(String username, Scanner scanner) {
 
 		System.out.print("search: ");
-		String search = scanner.nextLine();
-		SearchAnItemService service = new SearchAnItemService(search);
+		final String search = scanner.nextLine();
+		final SearchAnItemService service = new SearchAnItemService(search);
 
-		List<ItemDto> items = service.execute();
+		final List<ItemDto> items = service.execute();
 		for (ItemDto item : items) {
 			System.out.println(item.toString());
 		}
