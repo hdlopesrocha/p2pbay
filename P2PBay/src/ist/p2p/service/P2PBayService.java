@@ -10,21 +10,44 @@ import net.tomp2p.futures.FutureDHT;
 import net.tomp2p.futures.FutureDiscover;
 import net.tomp2p.p2p.Peer;
 import net.tomp2p.p2p.PeerMaker;
+import net.tomp2p.p2p.builder.AddBuilder;
+import net.tomp2p.p2p.builder.GetBuilder;
+import net.tomp2p.p2p.builder.PutBuilder;
 import net.tomp2p.peers.Number160;
 import net.tomp2p.storage.Data;
 
-public abstract class P2PBayService<T>  {
+// TODO: Auto-generated Javadoc
+/**
+ * The Class P2PBayService.
+ *
+ * @param <T>
+ *            the generic type
+ */
+public abstract class P2PBayService<T> {
 
+	/**
+	 * Execute.
+	 *
+	 * @return the t
+	 */
 	public abstract T execute();
-	
+
 	/** The peer. */
 	static protected Peer peer = null;
-	
-	
-	protected static void connect(String ip, int port) throws IOException{
+
+	/**
+	 * Connect.
+	 *
+	 * @param ip
+	 *            the ip
+	 * @param port
+	 *            the port
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
+	protected static void connect(String ip, int port) throws IOException {
 		Random random = new Random();
-		int myPeerPort = ip==null ? 1024 : 1025 + random
-				.nextInt(60000);
+		int myPeerPort = ip == null ? 1024 : 1025 + random.nextInt(60000);
 
 		Bindings bindings = new Bindings();
 		bindings.addInterface("eth0");
@@ -36,25 +59,21 @@ public abstract class P2PBayService<T>  {
 				.makeAndListen();
 		peer.getConfiguration().setBehindFirewall(true);
 
-		if (ip!=null) {
+		if (ip != null) {
 			InetAddress address = Inet4Address.getByName(ip);
 			FutureDiscover futureDiscover = peer.discover()
 					.setInetAddress(address).setPorts(port).start();
 			futureDiscover.awaitUninterruptibly();
 		}
-		System.out.println("*** PORT "+myPeerPort+" ***");
+		System.out.println("*** PORT " + myPeerPort + " ***");
 	}
-	
+
 	/**
 	 * Gets the.
 	 *
 	 * @param key
 	 *            the key
 	 * @return the object
-	 * @throws ClassNotFoundException
-	 *             the class not found exception
-	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
 	 */
 	protected static Object get(String key) {
 		try {
@@ -68,9 +87,8 @@ public abstract class P2PBayService<T>  {
 			e.printStackTrace();
 		}
 		return null;
-	}	
-	
-	
+	}
+
 	/**
 	 * Store.
 	 *
@@ -78,14 +96,12 @@ public abstract class P2PBayService<T>  {
 	 *            the key
 	 * @param value
 	 *            the value
-	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
 	 */
-	protected static void store(String key, Object value) {
+	protected static void put(String key, Object value) {
 
 		try {
-			peer.put(Number160.createHash(key))
-					.setData(new Data(value).setTTLSeconds(30)).start()
+			PutBuilder builder = peer.put(Number160.createHash(key));
+			builder.setData(new Data(value).setTTLSeconds(30)).start()
 					.awaitUninterruptibly();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -94,6 +110,8 @@ public abstract class P2PBayService<T>  {
 	}
 
 	
+	
+
 	/**
 	 * Store.
 	 *
@@ -101,21 +119,18 @@ public abstract class P2PBayService<T>  {
 	 *            the key
 	 * @param value
 	 *            the value
-	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
 	 */
 	protected static void replace(String key, Object value) {
 
 		Number160 hash = Number160.createHash(key);
 		try {
 			peer.remove(hash);
-			peer.put(hash)
-				.setData(new Data(value).setTTLSeconds(30)).start()
-				.awaitUninterruptibly();
+			peer.put(hash).setData(new Data(value).setTTLSeconds(30)).start()
+					.awaitUninterruptibly();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-	
+
 }

@@ -1,6 +1,7 @@
 package ist.p2p.service;
 
 import ist.p2p.Utils;
+import ist.p2p.dto.AuthenticationDto;
 
 import org.json.JSONObject;
 
@@ -36,11 +37,10 @@ public class AuthenticateUserService extends P2PBayService<Boolean> {
 	 */
 	@Override
 	public Boolean execute() {
-		final String saltPlusHash = (String) get("user:" + username);
-		if (saltPlusHash != null) {
-			final JSONObject obj = new JSONObject(saltPlusHash);
-			final String salt = obj.getString("salt");
-			final String hash = obj.getString("hash");
+		final AuthenticationDto auth = (AuthenticationDto) get("user:" + username);
+		if (auth != null) {
+			final String salt = auth.getSalt();
+			final String hash = auth.getHash();
 			if (Utils.sha1(salt + password).equals(hash)) {
 				return true;
 			}

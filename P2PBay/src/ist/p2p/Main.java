@@ -107,23 +107,29 @@ public class Main {
 			System.out.println("\t6) view purchase and bidding history");
 			System.out.println("\t0) quit");
 			System.out.print("\toption: ");
-			int option = Integer.valueOf(scanner.nextLine());
-			if (option == 1) {
-				offerAnItemMenu(username, scanner);
-			} else if (option == 2) {
-
-			} else if (option == 3) {
-				searchAnItemMenu(username, scanner);
-			} else if (option == 4) {
-
-			} else if (option == 5) {
-
-			} else if (option == 6) {
-
-			} else if (option == 0) {
-				break;
-			} else {
-				System.out.println("Option not found!");
+			
+			try {
+				int option = Integer.valueOf(scanner.nextLine());
+				if (option == 1) {
+					offerAnItemMenu(username, scanner);
+				} else if (option == 2) {
+	
+				} else if (option == 3) {
+					searchAnItemMenu(username, scanner);
+				} else if (option == 4) {
+	
+				} else if (option == 5) {
+	
+				} else if (option == 6) {
+	
+				} else if (option == 0) {
+					break;
+				} else {
+					System.out.println("Option not found!");
+				}
+			}
+			catch(NumberFormatException e){
+				System.out.println("Invalid option!");
 			}
 		}
 
@@ -172,7 +178,7 @@ public class Main {
 
 		List<ItemDto> items = service.execute();
 		for (ItemDto item : items) {
-			System.out.println(item.toJSON().toString());
+			System.out.println(item.toString());
 		}
 	}
 

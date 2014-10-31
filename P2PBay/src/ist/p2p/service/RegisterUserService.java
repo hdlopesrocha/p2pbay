@@ -1,6 +1,7 @@
 package ist.p2p.service;
 
 import ist.p2p.Utils;
+import ist.p2p.dto.AuthenticationDto;
 
 import org.json.JSONObject;
 
@@ -39,10 +40,7 @@ public class RegisterUserService extends P2PBayService<Boolean> {
 	public Boolean execute() {
 		String salt = Utils.randomString(16);
 		String hash = Utils.sha1(salt + password);
-		JSONObject obj = new JSONObject();
-		obj.put("salt", salt);
-		obj.put("hash", hash);
-		store("user:" + username, obj.toString());
+		put("user:" + username, new AuthenticationDto(salt, hash));
 		return true;
 	}
 

@@ -1,12 +1,17 @@
 package ist.p2p.dto;
 
-import org.json.JSONObject;
+import java.io.Serializable;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class ItemDto.
  */
-public class ItemDto {
+public class ItemDto implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7647175142472873433L;
 
 	/** The owner. */
 	private String owner;
@@ -34,31 +39,6 @@ public class ItemDto {
 		this.description = description;
 	}
 
-	/**
-	 * Instantiates a new item dto.
-	 *
-	 * @param obj
-	 *            the obj
-	 */
-	public ItemDto(JSONObject obj) {
-		super();
-		this.owner = obj.getString("owner");
-		this.title = obj.getString("title");
-		this.description = obj.getString("description");
-	}
-
-	/**
-	 * To json.
-	 *
-	 * @return the JSON object
-	 */
-	public JSONObject toJSON() {
-		JSONObject obj = new JSONObject();
-		obj.put("owner", getOwner());
-		obj.put("title", getTitle());
-		obj.put("description", getDescription());
-		return obj;
-	}
 
 	/**
 	 * Gets the owner.
@@ -87,4 +67,8 @@ public class ItemDto {
 		return description;
 	}
 
+	public String toString() {
+		return title+":"+description;
+	}
+	
 }

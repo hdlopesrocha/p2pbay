@@ -2,9 +2,10 @@ package ist.p2p.service;
 
 import ist.p2p.dto.ItemDto;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.UUID;
-
-import org.json.JSONArray;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -38,13 +39,21 @@ public class OfferAnItemForSaleService extends P2PBayService<Boolean> {
 
 			String uuid = UUID.randomUUID().toString();
 			String key = "product:" + uuid;
-			store(key, item.toJSON().toString());
+			put(key, item);
+			
+			HashSet<String> uniqueTokens = new HashSet<String>();
 			for (String token : item.getTitle().split(" ")) {
-				String existingIndex = (String) get("index:" + token);
-				JSONArray array = existingIndex == null ? new JSONArray()
-						: new JSONArray(existingIndex);
-				array.put(key);
-				replace("index:" + token, array.toString());
+				uniqueTokens.add(token);
+			}
+			
+			for (String token : uniqueTokens) {
+				List<String> existingIndexs = (List<String>) get("index:" + token);
+				
+				if(existingIndexs == null)
+					existingIndexs = new ArrayList<String>();
+				
+				existingIndexs.add(key);
+				put("index:" + token, existingIndexs);
 			}
 			return true;
 		}
