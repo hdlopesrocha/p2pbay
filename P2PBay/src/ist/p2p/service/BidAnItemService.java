@@ -2,6 +2,7 @@ package ist.p2p.service;
 
 import ist.p2p.dto.BidDto;
 import ist.p2p.dto.ItemDto;
+import ist.p2p.dto.UserDto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,24 +43,18 @@ public class BidAnItemService extends P2PBayService<Boolean> {
 			final BidDto bid = new BidDto(offer,username, item.getId());
 			put("bid:"+bidKey,bid);
 			
+			UserDto profile = (UserDto) get("profile:" + username);
+			if (profile == null) {
+				profile = new UserDto();
+			} 
 			
-			/* add to user bids */
-			List<String> userBids = (List<String>) get("userBids:" + username);
-			if (userBids == null) {
-				userBids = new ArrayList<String>();
-			}
-			userBids.add(bidKey);
-			put("userBids:" + username, userBids);
+			profile.getBids().add(bidKey);
+			put("profile:" + username, profile);
 
 			/* add to item bids */
-			List<String> itemBids = (List<String>) get("itemBids:"+ item.getId());
-			if (itemBids == null) {
-				itemBids = new ArrayList<String>();
-			}
-			itemBids.add(bidKey);
-			put("itemBids:" + item.getId(), itemBids);
+			item.getBids().add(bidKey);
+			put("item:" + item.getId(), item);
 			return true;
-
 		}
 		return false;
 	}

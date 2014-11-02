@@ -1,6 +1,8 @@
 package ist.p2p.dto;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 // TODO: Auto-generated Javadoc
@@ -24,11 +26,24 @@ public class ItemDto implements Serializable {
 	/** The description. */
 	private String id;
 
+	/** The bids. */
+	private List<String> bids;
+
 	/**
 	 * Instantiates a new item dto.
 	 */
 	public ItemDto() {
 		super();
+		bids = new ArrayList<String>();
+	}
+
+	/**
+	 * Gets the bids.
+	 *
+	 * @return the bids
+	 */
+	public List<String> getBids() {
+		return bids;
 	}
 
 	/**
@@ -91,7 +106,8 @@ public class ItemDto implements Serializable {
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		return "{id:"+id+", title:'"+title+"', decription:'"+description + "'}";
+		return "{id:" + id + ", title:'" + title + "', decription:'"
+				+ description + "'}";
 	}
 
 }

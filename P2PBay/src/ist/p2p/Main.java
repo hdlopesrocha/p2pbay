@@ -1,6 +1,7 @@
 package ist.p2p;
 
 import ist.p2p.dto.ItemDto;
+import ist.p2p.dto.UserDto;
 import ist.p2p.service.AuthenticateUserService;
 import ist.p2p.service.BidAnItemService;
 import ist.p2p.service.ConnectP2PBayService;
@@ -8,8 +9,7 @@ import ist.p2p.service.GetItemByIdService;
 import ist.p2p.service.OfferAnItemForSaleService;
 import ist.p2p.service.RegisterUserService;
 import ist.p2p.service.SearchAnItemService;
-import ist.p2p.service.ViewUserBidsService;
-import ist.p2p.service.ViewUserPurchasesService;
+import ist.p2p.service.ViewUserHistoryService;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -180,17 +180,16 @@ public class Main {
 	 *            the scanner
 	 */
 	private static void viewHistoryMenu(String username, Scanner scanner) {
-		final ViewUserBidsService userBidsService = new ViewUserBidsService(
+		final ViewUserHistoryService userBidsService = new ViewUserHistoryService(
 				username);
-		final ViewUserPurchasesService userPurchasesService = new ViewUserPurchasesService(
-				username);
+		UserDto user = userBidsService.execute();
 
 		System.out.println("--- BIDS HISTORY ---");
-		for (String str : userBidsService.execute()) {
+		for (String str : user.getBids()) {
 			System.out.println(str);
 		}
 		System.out.println("--- PURCHASES HISTORY ---");
-		for (String str : userPurchasesService.execute()) {
+		for (String str : user.getPurchases()) {
 			System.out.println(str);
 		}
 

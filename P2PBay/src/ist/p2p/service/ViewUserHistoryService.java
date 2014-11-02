@@ -1,13 +1,12 @@
 package ist.p2p.service;
 
-import java.util.ArrayList;
-import java.util.List;
+import ist.p2p.dto.UserDto;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class SearchItemService.
  */
-public class ViewUserBidsService extends P2PBayService<List<String>> {
+public class ViewUserHistoryService extends P2PBayService<UserDto> {
 
 	/** The search. */
 	private String username;
@@ -18,7 +17,7 @@ public class ViewUserBidsService extends P2PBayService<List<String>> {
 	 * @param username
 	 *            the username
 	 */
-	public ViewUserBidsService(String username) {
+	public ViewUserHistoryService(String username) {
 
 		this.username = username;
 	}
@@ -29,13 +28,13 @@ public class ViewUserBidsService extends P2PBayService<List<String>> {
 	 * @see ist.p2p.service.P2PBayService#execute()
 	 */
 	@Override
-	public List<String> execute() {
+	public UserDto execute() {
 
-		List<String> userBids = (List<String>) get("userBids:" + username);
-		if (userBids != null) {
-			return userBids;
+		UserDto profile = (UserDto) get("profile:" + username);
+		if (profile != null) {
+			return profile;
 		} else {
-			return new ArrayList<String>();
+			return new UserDto();
 		}
 
 	}
