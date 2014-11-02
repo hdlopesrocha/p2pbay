@@ -21,7 +21,7 @@ public class BidDto implements Serializable{
 	private String user;
 	
 	/** The ID of Item. */
-	private ItemDto Item;
+	private String Item;
 
 	/**
 	 * 
@@ -30,18 +30,18 @@ public class BidDto implements Serializable{
 		super();
 	}
 	
-	public BidDto(float offer, String user, ItemDto Item) {
+	public BidDto(float offer, String user, String Item) {
 		super();
 		this.setOffer(offer);
 		this.setUser(user);
 		this.setItem(Item);
 	}
 
-	public ItemDto getItem() {
+	public String getItem() {
 		return Item;
 	}
 
-	private void setItem(ItemDto Item) {
+	private void setItem(String Item) {
 		this.Item = Item;
 	}
 

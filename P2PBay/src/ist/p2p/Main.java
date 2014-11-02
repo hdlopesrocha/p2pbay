@@ -2,11 +2,14 @@ package ist.p2p;
 
 import ist.p2p.dto.ItemDto;
 import ist.p2p.service.AuthenticateUserService;
+import ist.p2p.service.BidAnItemService;
 import ist.p2p.service.ConnectP2PBayService;
 import ist.p2p.service.GetItemByIdService;
 import ist.p2p.service.OfferAnItemForSaleService;
 import ist.p2p.service.RegisterUserService;
 import ist.p2p.service.SearchAnItemService;
+import ist.p2p.service.ViewUserBidsService;
+import ist.p2p.service.ViewUserPurchasesService;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -30,14 +33,14 @@ public class Main {
 	 *             Signals that an I/O exception has occurred.
 	 */
 	public static void loadUsersFile(String filename) throws IOException {
-		File file = new File(filename);
-		BufferedReader reader = new BufferedReader(new FileReader(file));
+		final File file = new File(filename);
+		final BufferedReader reader = new BufferedReader(new FileReader(file));
 		String line = "";
 
 		while ((line = reader.readLine()) != null) {
-			String[] splits = line.split(":");
-			RegisterUserService service = new RegisterUserService(splits[0],
-					splits[1]);
+			final String[] splits = line.split(":");
+			final RegisterUserService service = new RegisterUserService(
+					splits[0], splits[1]);
 			service.execute();
 		}
 		reader.close();
@@ -57,9 +60,9 @@ public class Main {
 	public static void main(String[] args) throws IOException {
 
 		ConnectP2PBayService service;
-		String ip = Utils.getArgValue("-i", args);
+		final String ip = Utils.getArgValue("-i", args);
 		if (ip != null) {
-			String[] splits = ip.split(":");
+			final String[] splits = ip.split(":");
 			service = new ConnectP2PBayService(splits[0],
 					Integer.valueOf(splits[1]));
 		} else {
@@ -67,11 +70,11 @@ public class Main {
 		}
 		service.execute();
 
-		String usersFileName = Utils.getArgValue("-u", args);
+		final String usersFileName = Utils.getArgValue("-u", args);
 		if (usersFileName != null) {
 			loadUsersFile(usersFileName);
 		}
-		Scanner scanner = new Scanner(System.in);
+		final Scanner scanner = new Scanner(System.in);
 		while (true) {
 			commandLine(scanner);
 		}
@@ -124,7 +127,7 @@ public class Main {
 				} else if (option == 3) {
 					searchAnItemMenu(username, scanner);
 				} else if (option == 4) {
-					searchAnItemMenu(username, scanner);
+					bidOnAnItemMenu(username, scanner);
 				} else if (option == 5) {
 					viewItemDetailsMenu(username, scanner);
 				} else if (option == 6) {
@@ -142,26 +145,88 @@ public class Main {
 		System.out.println("See you next time!");
 	}
 
-	private static void viewHistoryMenu(String username, Scanner scanner) {
-		// TODO Auto-generated method stub
-		
+	/**
+	 * Bid on an item menu.
+	 *
+	 * @param username
+	 *            the username
+	 * @param scanner
+	 *            the scanner
+	 */
+	private static void bidOnAnItemMenu(String username, Scanner scanner) {
+		System.out.print("id: ");
+		final String id = scanner.nextLine();
+		System.out.print("offer: ");
+		try {
+			final Float offer = Float.valueOf(scanner.nextLine());
+			final BidAnItemService service = new BidAnItemService(username, id,
+					offer);
+			if (service.execute()) {
+				System.out.println("Bid succeded!");
+			} else {
+				System.out.println("Invalid bid!");
+			}
+		} catch (NumberFormatException e) {
+			System.out.println("Invalid offer!");
+		}
 	}
 
+	/**
+	 * View history menu.
+	 *
+	 * @param username
+	 *            the username
+	 * @param scanner
+	 *            the scanner
+	 */
+	private static void viewHistoryMenu(String username, Scanner scanner) {
+		final ViewUserBidsService userBidsService = new ViewUserBidsService(
+				username);
+		final ViewUserPurchasesService userPurchasesService = new ViewUserPurchasesService(
+				username);
+
+		System.out.println("--- BIDS HISTORY ---");
+		for (String str : userBidsService.execute()) {
+			System.out.println(str);
+		}
+		System.out.println("--- PURCHASES HISTORY ---");
+		for (String str : userPurchasesService.execute()) {
+			System.out.println(str);
+		}
+
+	}
+
+	/**
+	 * View item details menu.
+	 *
+	 * @param username
+	 *            the username
+	 * @param scanner
+	 *            the scanner
+	 */
 	private static void viewItemDetailsMenu(String username, Scanner scanner) {
 		System.out.print("id: ");
 		final String id = scanner.nextLine();
 		final GetItemByIdService service = new GetItemByIdService(id);
 		final ItemDto result = service.execute();
-		if(result!=null){
+		if (result != null) {
 			System.out.println(result);
-		}
-		else {
+		} else {
 			System.out.println("Item not found!");
 		}
 	}
+
+	/**
+	 * Accept a bid menu.
+	 *
+	 * @param username
+	 *            the username
+	 * @param scanner
+	 *            the scanner
+	 */
 	private static void acceptABidMenu(String username, Scanner scanner) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	/**
