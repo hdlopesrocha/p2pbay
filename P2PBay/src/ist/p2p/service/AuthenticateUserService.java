@@ -35,7 +35,7 @@ public class AuthenticateUserService extends P2PBayService {
 	 */
 	@Override
 	public boolean execute() {
-		final Authentication auth = (Authentication) get("user:" + username);
+		final Authentication auth = (Authentication) get("auth:" + username);
 		if (auth != null) {
 			final String salt = auth.getSalt();
 			final String hash = auth.getHash();

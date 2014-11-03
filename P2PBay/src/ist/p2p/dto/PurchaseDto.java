@@ -1,19 +1,23 @@
-package ist.p2p.domain;
+package ist.p2p.dto;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
+import java.util.UUID;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class ItemDto.
  */
-public class Item implements Serializable {
+public class PurchaseDto implements Serializable {
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -7647175142472873433L;
 
 	/** The owner. */
-	private String owner;
+	private float offer;
 
 	/** The title. */
 	private String title;
@@ -21,65 +25,33 @@ public class Item implements Serializable {
 	/** The description. */
 	private String description;
 
-
-	/** The bids. */
-	private TreeMap<Float,String> bids;
-
-	
-	private boolean closed;
-	
-	/**
-	 * Instantiates a new item dto.
-	 */
-	public Item() {
-		super();
-		closed = false;
-		bids = new TreeMap<Float,String>();
-	}
-
-	/**
-	 * Gets the bids.
-	 *
-	 * @return the bids
-	 */
-	public TreeMap<Float,String> getBids() {
-		return bids;
-	}
+	private String id;
 
 	/**
 	 * Instantiates a new item dto.
 	 *
-	 * @param owner
-	 *            the owner
 	 * @param title
 	 *            the title
 	 * @param description
 	 *            the description
+	 * @param offer
+	 *            the offer
 	 */
-	public Item(String owner, String title, String description) {
+	public PurchaseDto(String id,String title, String description, float offer) {
 		super();
-		this.owner = owner;
+		this.id = id;
+		this.offer = offer;
 		this.title = title;
 		this.description = description;
-		closed = false;
-		this.bids = new TreeMap<Float,String>();
 	}
 
-	public boolean isClosed(){
-		return closed;
-	}
-	
-	public void close(){
-		closed = true;
-	}
-	
 	/**
-	 * Gets the owner.
+	 * Gets the offer.
 	 *
-	 * @return the owner
+	 * @return the offer
 	 */
-	public String getOwner() {
-		return owner;
+	public float getOffer() {
+		return offer;
 	}
 
 	/**
@@ -100,6 +72,9 @@ public class Item implements Serializable {
 		return description;
 	}
 
-
+	public String getId() {
+		// TODO Auto-generated method stub
+		return id;
+	}
 
 }

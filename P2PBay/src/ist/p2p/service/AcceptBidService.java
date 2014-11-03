@@ -2,6 +2,7 @@ package ist.p2p.service;
 
 import ist.p2p.domain.Item;
 import ist.p2p.dto.BidDto;
+import ist.p2p.dto.PurchaseDto;
 
 import java.util.List;
 
@@ -38,14 +39,17 @@ public class AcceptBidService extends P2PBayService {
 	@Override
 	public boolean execute() {
 		final Item item = (Item) get("item:" + id);
-		if (item != null && item.getOwner().equals(username) && item.getBids().size()>0) {
+		if (item != null && !item.isClosed() && item.getOwner().equals(username) && item.getBids().size()>0) {
 
 			String lastBidId = item.getBids().lastEntry().getValue();
 			BidDto bid = (BidDto) get("bid:" + lastBidId);
 
-			List<String> userBuys = (List<String>) get("buys:" + bid.getUser());
-			userBuys.add(id);
+			List<PurchaseDto> userBuys = (List<PurchaseDto>) get("buys:" + bid.getUser());
+			userBuys.add(new PurchaseDto(id, item.getTitle(), item.getDescription(), bid.getOffer()));
 			put("buys:" + bid.getUser(),userBuys);
+			
+			item.close();
+			put("item:" + id,item);
 			
 			return true;
 		}

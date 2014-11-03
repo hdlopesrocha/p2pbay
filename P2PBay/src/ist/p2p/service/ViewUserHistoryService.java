@@ -1,5 +1,11 @@
 package ist.p2p.service;
 
+import ist.p2p.domain.Item;
+import ist.p2p.dto.BidDto;
+import ist.p2p.dto.ItemDto;
+import ist.p2p.dto.PurchaseDto;
+
+import java.util.ArrayList;
 import java.util.List;
 
 // TODO: Auto-generated Javadoc
@@ -13,17 +19,17 @@ public class ViewUserHistoryService extends P2PBayService {
 
 	
 	/** The bids. */
-	private List<String> bids;
+	private List<BidDto> bids;
 
 	/** The bids. */
-	private List<String> purchases;
+	private List<PurchaseDto> purchases;
 
 	/**
 	 * Gets the bids.
 	 *
 	 * @return the bids
 	 */
-	public List<String> getBids() {
+	public List<BidDto> getBids() {
 		return bids;
 	}
 
@@ -32,7 +38,7 @@ public class ViewUserHistoryService extends P2PBayService {
 	 *
 	 * @return the bids
 	 */
-	public List<String> getPurchases() {
+	public List<PurchaseDto> getPurchases() {
 		return purchases;
 	}
 	/**
@@ -53,8 +59,20 @@ public class ViewUserHistoryService extends P2PBayService {
 	 */
 	@Override
 	public boolean execute() {
-		bids = (List<String>) get("bids:" + username);
-		purchases = (List<String>) get("buys:" + username);		
+		List<String> bidIds = (List<String>) get("bids:" + username);
+		
+		bids = new ArrayList<BidDto>();
+		for(String bidId: bidIds){
+			BidDto bid =(BidDto) get("bid:" + bidId);
+			if(bid!=null){
+				bids.add(bid);
+			}
+		}
+		
+		purchases  = (List<PurchaseDto>) get("buys:" + username);		
+
+		
+		
 		return true;
 	}
 

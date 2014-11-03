@@ -2,11 +2,8 @@ package ist.p2p;
 
 import ist.p2p.dto.BidDto;
 import ist.p2p.dto.ItemDto;
-import ist.p2p.logic.LogicAnd;
+import ist.p2p.dto.PurchaseDto;
 import ist.p2p.logic.LogicNode;
-import ist.p2p.logic.LogicNot;
-import ist.p2p.logic.LogicOr;
-import ist.p2p.logic.LogicString;
 import ist.p2p.service.AcceptBidService;
 import ist.p2p.service.AuthenticateUserService;
 import ist.p2p.service.BidAnItemService;
@@ -70,15 +67,21 @@ public class Main {
 		contents.add("cenas");
 		contents.add("maradas");
 
-		System.out.println(LogicNode.extractFromString("(and cenas maradas)").check(contents));
-		System.out.println(LogicNode.extractFromString("(and cenas fodidas)").check(contents));
-		System.out.println(LogicNode.extractFromString("(or cenas fodidas)").check(contents));
-		System.out.println(LogicNode.extractFromString("(or xpto fodidas)").check(contents));
-		System.out.println(LogicNode.extractFromString("(and cenas (not maradas))").check(contents));
-		System.out.println(LogicNode.extractFromString("(and cenas (not fodidas))").check(contents));
-		System.out.println(LogicNode.extractFromString("(or (and cenas (not maradas)) maradas)").check(contents));
-	
-		
+		System.out.println(LogicNode.extractFromString("(and cenas maradas)")
+				.check(contents));
+		System.out.println(LogicNode.extractFromString("(and cenas fodidas)")
+				.check(contents));
+		System.out.println(LogicNode.extractFromString("(or cenas fodidas)")
+				.check(contents));
+		System.out.println(LogicNode.extractFromString("(or xpto fodidas)")
+				.check(contents));
+		System.out.println(LogicNode.extractFromString(
+				"(and cenas (not maradas))").check(contents));
+		System.out.println(LogicNode.extractFromString(
+				"(and cenas (not fodidas))").check(contents));
+		System.out.println(LogicNode.extractFromString(
+				"(or (and cenas (not maradas)) maradas)").check(contents));
+
 		ConnectP2PBayService service;
 		final String ip = Utils.getArgValue("-i", args);
 		if (ip != null) {
@@ -207,13 +210,24 @@ public class Main {
 				username);
 		if (userBidsService.execute()) {
 
-			System.out.println("### BIDS HISTORY ###");
-			for (String str : userBidsService.getBids()) {
-				System.out.println("\t" + str);
+			System.out.println("############## BIDS HISTORY ##############");
+			for (BidDto bid : userBidsService.getBids()) {
+				if(bid!=userBidsService.getBids().get(0)){
+					System.out.println("\t--------------------------------");
+				}
+				GetItemByIdService getService = new GetItemByIdService(	bid.getItem());
+				getService.execute();
+				System.out.println("\tid: " + bid.getItem());
+				System.out.println("\ttitle: " + getService.getItem().getTitle());
+				System.out.println("\toffer: " + bid.getOffer());
+				
+				
 			}
-			System.out.println("### PURCHASES HISTORY ###");
-			for (String str : userBidsService.getPurchases()) {
-				System.out.println("\t" + str);
+			System.out.println("############## PURCHASES HISTORY ##############");
+			for (PurchaseDto item : userBidsService.getPurchases()) {
+				System.out.println("\tid: " + item.getId());
+				System.out.println("\ttitle: " + item.getTitle());
+				System.out.println("\toffer: " + item.getOffer());
 			}
 		}
 	}
@@ -232,6 +246,7 @@ public class Main {
 		final GetItemByIdService service = new GetItemByIdService(id);
 		if (service.execute()) {
 			final ItemDto item = service.getItem();
+			System.out.println("owner: " + item.getOwner());
 			System.out.println("title: " + item.getTitle());
 			System.out.println("description: " + item.getDescription());
 			System.out.println("bids: ");
