@@ -6,8 +6,6 @@ package ist.p2p.logic;
  */
 public class LogicNot extends LogicNode {
 
-	/** The not. */
-	private LogicNode not;
 
 	/**
 	 * Instantiates a new logic not.
@@ -16,7 +14,7 @@ public class LogicNot extends LogicNode {
 	 *            the arg
 	 */
 	public LogicNot(LogicNode arg) {
-		this.not = arg;
+		super(arg);
 	}
 
 	/*
@@ -26,7 +24,7 @@ public class LogicNot extends LogicNode {
 	 */
 	@Override
 	public boolean check(Iterable<String> strings) {
-		return !not.check(strings);
+		return !getArgs()[0].check(strings);
 	}
 
 }

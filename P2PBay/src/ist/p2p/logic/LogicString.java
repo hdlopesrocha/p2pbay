@@ -34,4 +34,8 @@ public class LogicString extends LogicNode {
 		return false;
 	}
 
+	 @Override
+	public String toString(){
+		return content;
+	}
 }
