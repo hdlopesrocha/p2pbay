@@ -50,11 +50,13 @@ public class SearchAnItemService extends P2PBayService {
 	 */
 	@Override
 	public boolean execute() {
-		HashSet<String> neededTokens = new HashSet<String>();
-		LogicNode rootNode = LogicNode.extractFromString(search);
+		items = new ArrayList<ItemDto>();
+
+		final HashSet<String> neededTokens = new HashSet<String>();
+		final LogicNode rootNode = LogicNode.extractFromString(search);
 		rec(neededTokens, rootNode);
 
-		TreeMap<String, List<String>> temp = new TreeMap<String, List<String>>(); // <fileId,
+		final TreeMap<String, List<String>> temp = new TreeMap<String, List<String>>(); // <fileId,
 																					// tokens>
 		for (String token : neededTokens) {
 			final List<String> indexs = (List<String>) get("index:" + token);
@@ -70,7 +72,6 @@ public class SearchAnItemService extends P2PBayService {
 			}
 		}
 
-		items = new ArrayList<ItemDto>();
 		for (Entry<String, List<String>> fileTokens : temp.entrySet()) {
 			if (rootNode.check(fileTokens.getValue())) {
 				final Item product = (Item) get("item:" + fileTokens.getKey());
