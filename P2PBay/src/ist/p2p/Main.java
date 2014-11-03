@@ -1,7 +1,8 @@
 package ist.p2p;
 
-import ist.p2p.dto.ItemDto;
+import ist.p2p.domain.Item;
 import ist.p2p.dto.HistoryDto;
+import ist.p2p.dto.ItemDto;
 import ist.p2p.service.AuthenticateUserService;
 import ist.p2p.service.BidAnItemService;
 import ist.p2p.service.ConnectP2PBayService;
@@ -109,14 +110,14 @@ public class Main {
 		System.out.println("Authentication Succeded!");
 
 		while (true) {
-			System.out.println("\t1) offer an item for sale");
-			System.out.println("\t2) accept a bid");
-			System.out.println("\t3) search for an item to buy");
-			System.out.println("\t4) bid on an item");
-			System.out.println("\t5) view the details of an item");
-			System.out.println("\t6) view purchase and bidding history");
-			System.out.println("\t0) logout");
-			System.out.print("\toption: ");
+			System.out.println("1) offer an item for sale");
+			System.out.println("2) accept a bid");
+			System.out.println("3) search for an item to buy");
+			System.out.println("4) bid on an item");
+			System.out.println("5) view the details of an item");
+			System.out.println("6) view purchase and bidding history");
+			System.out.println("0) logout");
+			System.out.print("option: ");
 
 			try {
 				final int option = Integer.valueOf(scanner.nextLine());
@@ -209,6 +210,7 @@ public class Main {
 		final GetItemByIdService service = new GetItemByIdService(id);
 		final ItemDto result = service.execute();
 		if (result != null) {
+			System.out.println("------------------------");
 			System.out.println(result);
 		} else {
 			System.out.println("Item not found!");
@@ -242,7 +244,7 @@ public class Main {
 		final String title = scanner.nextLine();
 		System.out.print("description: ");
 		final String description = scanner.nextLine();
-		final ItemDto newItem = new ItemDto(username, title, description);
+		final Item newItem = new Item(username, title, description);
 
 		final OfferAnItemForSaleService service = new OfferAnItemForSaleService(
 				newItem);
@@ -267,8 +269,8 @@ public class Main {
 		final String search = scanner.nextLine();
 		final SearchAnItemService service = new SearchAnItemService(search);
 
-		final List<ItemDto> items = service.execute();
-		for (ItemDto item : items) {
+		final List<Item> items = service.execute();
+		for (Item item : items) {
 			System.out.println(item.toString());
 		}
 	}

@@ -1,6 +1,6 @@
 package ist.p2p.service;
 
-import ist.p2p.dto.ItemDto;
+import ist.p2p.domain.Item;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -13,7 +13,7 @@ import java.util.List;
 public class OfferAnItemForSaleService extends P2PBayService<Boolean> {
 
 	/** The item. */
-	private ItemDto item;
+	private Item item;
 
 	/**
 	 * Instantiates a new offer an item for sale service.
@@ -21,7 +21,7 @@ public class OfferAnItemForSaleService extends P2PBayService<Boolean> {
 	 * @param item
 	 *            the item
 	 */
-	public OfferAnItemForSaleService(ItemDto item) {
+	public OfferAnItemForSaleService(Item item) {
 		this.item = item;
 	}
 

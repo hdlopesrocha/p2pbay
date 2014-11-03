@@ -62,7 +62,7 @@ public class BidDto implements Serializable{
 	}
 	
 	public String toString() {
-		return "{user:"+user+", offer:'"+offer+"', Item:'"+Item.toString() + "'}";
+		return "{user:"+user+", offer:'"+offer+"'}";
 	}
 
 }

@@ -1,6 +1,6 @@
 package ist.p2p.service;
 
-import ist.p2p.dto.ItemDto;
+import ist.p2p.domain.Item;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * The Class SearchItemService.
  */
-public class SearchAnItemService extends P2PBayService<List<ItemDto>> {
+public class SearchAnItemService extends P2PBayService<List<Item>> {
 
 	/** The search. */
 	private String search;
@@ -30,13 +30,13 @@ public class SearchAnItemService extends P2PBayService<List<ItemDto>> {
 	 * @see ist.p2p.service.P2PBayService#execute()
 	 */
 	@Override
-	public List<ItemDto> execute() {
-		final List<ItemDto> items = new ArrayList<ItemDto>();
+	public List<Item> execute() {
+		final List<Item> items = new ArrayList<Item>();
 		@SuppressWarnings("unchecked")
 		final List<String> indexs  = (List<String>) get("index:" + search);
 		if (indexs != null) {
 			for (String key : indexs) {
-				final ItemDto product = (ItemDto) get("item:"+key);
+				final Item product = (Item) get("item:"+key);
 				if (product != null) {
 					items.add(product);
 				}
