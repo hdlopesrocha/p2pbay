@@ -1,5 +1,6 @@
 package ist.p2p.dto;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,7 +8,12 @@ import java.util.List;
 /**
  * The Class UserDto.
  */
-public class UserDto {
+public class HistoryDto implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5806657813224236345L;
 
 	/** The bids. */
 	private List<String> bids;
@@ -18,7 +24,7 @@ public class UserDto {
 	/**
 	 * Instantiates a new user dto.
 	 */
-	public UserDto() {
+	public HistoryDto() {
 		bids = new ArrayList<String>();
 		purchases = new ArrayList<String>();
 	}

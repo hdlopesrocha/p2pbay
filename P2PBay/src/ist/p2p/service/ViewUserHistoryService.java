@@ -1,12 +1,12 @@
 package ist.p2p.service;
 
-import ist.p2p.dto.UserDto;
+import ist.p2p.dto.HistoryDto;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class SearchItemService.
  */
-public class ViewUserHistoryService extends P2PBayService<UserDto> {
+public class ViewUserHistoryService extends P2PBayService<HistoryDto> {
 
 	/** The search. */
 	private String username;
@@ -28,13 +28,13 @@ public class ViewUserHistoryService extends P2PBayService<UserDto> {
 	 * @see ist.p2p.service.P2PBayService#execute()
 	 */
 	@Override
-	public UserDto execute() {
+	public HistoryDto execute() {
 
-		UserDto profile = (UserDto) get("profile:" + username);
+		final HistoryDto profile = (HistoryDto) get("hist" + username);
 		if (profile != null) {
 			return profile;
 		} else {
-			return new UserDto();
+			return new HistoryDto();
 		}
 
 	}

@@ -36,8 +36,7 @@ public class OfferAnItemForSaleService extends P2PBayService<Boolean> {
 				&& !item.getTitle().isEmpty()
 				&& !item.getDescription().isEmpty()) {
 
-			final String key = "item:" + item.getId();
-			put(key, item);
+			put("item:"+item.getId(), item);
 			
 			final HashSet<String> uniqueTokens = new HashSet<String>();
 			for (String token : item.getTitle().split(" ")) {
@@ -51,7 +50,7 @@ public class OfferAnItemForSaleService extends P2PBayService<Boolean> {
 				if(existingIndexs == null)
 					existingIndexs = new ArrayList<String>();
 				
-				existingIndexs.add(key);
+				existingIndexs.add(item.getId());
 				put("index:" + token, existingIndexs);
 			}
 			return true;

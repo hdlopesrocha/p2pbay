@@ -36,7 +36,7 @@ public class SearchAnItemService extends P2PBayService<List<ItemDto>> {
 		final List<String> indexs  = (List<String>) get("index:" + search);
 		if (indexs != null) {
 			for (String key : indexs) {
-				final ItemDto product = (ItemDto) get(key);
+				final ItemDto product = (ItemDto) get("item:"+key);
 				if (product != null) {
 					items.add(product);
 				}

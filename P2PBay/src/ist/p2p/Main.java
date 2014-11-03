@@ -1,7 +1,7 @@
 package ist.p2p;
 
 import ist.p2p.dto.ItemDto;
-import ist.p2p.dto.UserDto;
+import ist.p2p.dto.HistoryDto;
 import ist.p2p.service.AuthenticateUserService;
 import ist.p2p.service.BidAnItemService;
 import ist.p2p.service.ConnectP2PBayService;
@@ -182,7 +182,7 @@ public class Main {
 	private static void viewHistoryMenu(String username, Scanner scanner) {
 		final ViewUserHistoryService userBidsService = new ViewUserHistoryService(
 				username);
-		UserDto user = userBidsService.execute();
+		HistoryDto user = userBidsService.execute();
 
 		System.out.println("--- BIDS HISTORY ---");
 		for (String str : user.getBids()) {
