@@ -1,6 +1,7 @@
 package ist.p2p.service;
 
 import ist.p2p.domain.Item;
+import ist.p2p.dto.ItemDto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,10 +10,13 @@ import java.util.List;
 /**
  * The Class SearchItemService.
  */
-public class SearchAnItemService extends P2PBayService<List<Item>> {
+public class SearchAnItemService extends P2PBayService {
 
 	/** The search. */
 	private String search;
+
+	/** The items. */
+	private List<ItemDto> items;
 
 	/**
 	 * Instantiates a new search item service.
@@ -30,18 +34,27 @@ public class SearchAnItemService extends P2PBayService<List<Item>> {
 	 * @see ist.p2p.service.P2PBayService#execute()
 	 */
 	@Override
-	public List<Item> execute() {
-		final List<Item> items = new ArrayList<Item>();
+	public boolean execute() {
+		items = new ArrayList<ItemDto>();
 		@SuppressWarnings("unchecked")
-		final List<String> indexs  = (List<String>) get("index:" + search);
+		final List<String> indexs = (List<String>) get("index:" + search);
 		if (indexs != null) {
-			for (String key : indexs) {
-				final Item product = (Item) get("item:"+key);
+			for (String id : indexs) {
+				final Item product = (Item) get("item:" + id);
 				if (product != null) {
-					items.add(product);
+					items.add(new ItemDto(id,product.getOwner(), product.getTitle(), product.getDescription()));
 				}
 			}
 		}
+		return true;
+	}
+
+	/**
+	 * Gets the items.
+	 *
+	 * @return the items
+	 */
+	public List<ItemDto> getItems() {
 		return items;
 	}
 

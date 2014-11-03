@@ -21,14 +21,14 @@ import net.tomp2p.storage.Data;
  * @param <T>
  *            the generic type
  */
-public abstract class P2PBayService<T> {
+public abstract class P2PBayService {
 
 	/**
 	 * Execute.
 	 *
 	 * @return the t
 	 */
-	public abstract T execute();
+	public abstract boolean execute();
 
 	/** The peer. */
 	static protected Peer peer = null;

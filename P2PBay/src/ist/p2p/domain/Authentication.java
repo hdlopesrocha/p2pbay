@@ -1,4 +1,4 @@
-package ist.p2p.dto;
+package ist.p2p.domain;
 
 import java.io.Serializable;
 
@@ -6,7 +6,7 @@ import java.io.Serializable;
 /**
  * The Class AuthenticationDto.
  */
-public class AuthenticationDto implements Serializable {
+public class Authentication implements Serializable {
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 6254705903420169696L;
@@ -20,7 +20,7 @@ public class AuthenticationDto implements Serializable {
 	/**
 	 * Instantiates a new authentication dto.
 	 */
-	public AuthenticationDto() {
+	public Authentication() {
 		super();
 	}
 
@@ -32,7 +32,7 @@ public class AuthenticationDto implements Serializable {
 	 * @param hash
 	 *            the hash
 	 */
-	public AuthenticationDto(String salt, String hash) {
+	public Authentication(String salt, String hash) {
 		super();
 		this.salt = salt;
 		this.hash = hash;

@@ -8,11 +8,12 @@ import ist.p2p.dto.ItemDto;
 /**
  * The Class SearchItemService.
  */
-public class GetItemByIdService extends P2PBayService<ItemDto> {
+public class GetItemByIdService extends P2PBayService {
 
 	/** The search. */
 	private String id;
-
+	private ItemDto item;
+	
 	/**
 	 * Instantiates a new search item service.
 	 *
@@ -29,16 +30,20 @@ public class GetItemByIdService extends P2PBayService<ItemDto> {
 	 * @see ist.p2p.service.P2PBayService#execute()
 	 */
 	@Override
-	public ItemDto execute() {
-		final Item item = (Item) get("item:" + id);
-		final ItemDto ret = new ItemDto(item.getOwner(), item.getTitle(),
-				item.getDescription());
-		for (String str : item.getBids().values()) {
+	public boolean execute() {
+		final Item concreteItem = (Item) get("item:" + id);
+		item = new ItemDto(id,concreteItem.getOwner(), concreteItem.getTitle(),
+				concreteItem.getDescription());
+		for (String str : concreteItem.getBids().values()) {
 			final BidDto bid = (BidDto) get("bid:" + str);
-			ret.getBids().add(bid);
+			item.getBids().add(bid);
 		}
 
-		return ret;
+		return true;
 	}
 
+	public ItemDto getItem(){
+		return item;
+	}
+	
 }

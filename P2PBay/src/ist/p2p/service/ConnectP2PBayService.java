@@ -2,7 +2,7 @@ package ist.p2p.service;
 
 import java.io.IOException;
 
-public class ConnectP2PBayService extends P2PBayService<Boolean>{
+public class ConnectP2PBayService extends P2PBayService{
 
 	private String ip =null;
 	private int port;
@@ -17,7 +17,7 @@ public class ConnectP2PBayService extends P2PBayService<Boolean>{
 	}
 
 	@Override
-	public Boolean execute() {
+	public boolean execute() {
 		try {
 			connect(ip,port);
 		} catch (IOException e) {

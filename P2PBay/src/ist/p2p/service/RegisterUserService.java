@@ -1,13 +1,15 @@
 package ist.p2p.service;
 
+import java.util.ArrayList;
+
 import ist.p2p.Utils;
-import ist.p2p.dto.AuthenticationDto;
+import ist.p2p.domain.Authentication;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class RegisterUserService.
  */
-public class RegisterUserService extends P2PBayService<Boolean> {
+public class RegisterUserService extends P2PBayService {
 
 	/** The username. */
 	private String username;
@@ -35,10 +37,12 @@ public class RegisterUserService extends P2PBayService<Boolean> {
 	 * @see ist.p2p.service.P2PBayService#execute()
 	 */
 	@Override
-	public Boolean execute() {
+	public boolean execute() {
 		final String salt = Utils.randomString(16);
 		final String hash = Utils.sha1(salt + password);
-		put("user:" + username, new AuthenticationDto(salt, hash));
+		put("user:" + username, new Authentication(salt, hash));
+		put("bids:" + username, new ArrayList<String>());
+		put("buys:" + username, new ArrayList<String>());
 		return true;
 	}
 

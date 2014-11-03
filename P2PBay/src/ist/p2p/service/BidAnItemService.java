@@ -2,14 +2,14 @@ package ist.p2p.service;
 
 import ist.p2p.domain.Item;
 import ist.p2p.dto.BidDto;
-import ist.p2p.dto.HistoryDto;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
  * The Class SearchItemService.
  */
-public class BidAnItemService extends P2PBayService<Boolean> {
+public class BidAnItemService extends P2PBayService {
 
 	/** The search. */
 	private String id;
@@ -34,24 +34,21 @@ public class BidAnItemService extends P2PBayService<Boolean> {
 	 * @see ist.p2p.service.P2PBayService#execute()
 	 */
 	@Override
-	public Boolean execute() {
+	public boolean execute() {
 		final Item item = (Item) get("item:" + id);
 		if (item != null) {
 			final String bidKey = UUID.randomUUID().toString();
-			final BidDto bid = new BidDto(offer,username, item.getId());
+			final BidDto bid = new BidDto(offer,username, id);
 			put("bid:"+bidKey,bid);
 			
-			HistoryDto profile = (HistoryDto) get("profile:" + username);
-			if (profile == null) {
-				profile = new HistoryDto();
-			} 
-			
-			profile.getBids().add(bidKey);
-			put("hist:" + username, profile);
+			/* add to item userBids */
+			List<String> userBids = (List<String>) get("bids:" + username);
+			userBids.add(bidKey);
+			put("bids:" + username, userBids);
 
 			/* add to item bids */
 			item.getBids().put(bid.getOffer(),bidKey);
-			put("item:" + item.getId(), item);
+			put("item:" +  id, item);
 			return true;
 		}
 		return false;

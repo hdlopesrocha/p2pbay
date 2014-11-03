@@ -1,13 +1,17 @@
-package ist.p2p.domain;
+package ist.p2p.dto;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
+import java.util.UUID;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class ItemDto.
  */
-public class Item implements Serializable {
+public class ItemDto implements Serializable {
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -7647175142472873433L;
@@ -21,16 +25,27 @@ public class Item implements Serializable {
 	/** The description. */
 	private String description;
 
+	/** The id. */
+	private String id;
 
 	/** The bids. */
-	private TreeMap<Float,String> bids;
+	private List<BidDto> bids;
+
+	/**
+	 * Gets the id.
+	 *
+	 * @return the id
+	 */
+	public String getId() {
+		return id;
+	}
 
 	/**
 	 * Instantiates a new item dto.
 	 */
-	public Item() {
+	public ItemDto() {
 		super();
-		bids = new TreeMap<Float,String>();
+		bids = new ArrayList<BidDto>();
 	}
 
 	/**
@@ -38,7 +53,7 @@ public class Item implements Serializable {
 	 *
 	 * @return the bids
 	 */
-	public TreeMap<Float,String> getBids() {
+	public List<BidDto> getBids() {
 		return bids;
 	}
 
@@ -52,12 +67,13 @@ public class Item implements Serializable {
 	 * @param description
 	 *            the description
 	 */
-	public Item(String owner, String title, String description) {
+	public ItemDto(String id, String owner, String title, String description) {
 		super();
+		this.id = id;
 		this.owner = owner;
 		this.title = title;
 		this.description = description;
-		this.bids = new TreeMap<Float,String>();
+		this.bids = new ArrayList<BidDto>();
 	}
 
 	/**

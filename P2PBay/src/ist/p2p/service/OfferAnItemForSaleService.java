@@ -5,24 +5,23 @@ import ist.p2p.domain.Item;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.UUID;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class OfferAnItemForSaleService.
  */
-public class OfferAnItemForSaleService extends P2PBayService<Boolean> {
+public class OfferAnItemForSaleService extends P2PBayService {
 
-	/** The item. */
-	private Item item;
+	private String username;
+	private String title;
+	private String description;
 
-	/**
-	 * Instantiates a new offer an item for sale service.
-	 *
-	 * @param item
-	 *            the item
-	 */
-	public OfferAnItemForSaleService(Item item) {
-		this.item = item;
+	public OfferAnItemForSaleService(String username, String title,
+			String description) {
+		this.username = username;
+		this.title = title;
+		this.description = description;
 	}
 
 	/*
@@ -31,26 +30,28 @@ public class OfferAnItemForSaleService extends P2PBayService<Boolean> {
 	 * @see ist.p2p.service.P2PBayService#execute()
 	 */
 	@Override
-	public Boolean execute() {
-		if (item.getTitle() != null && item.getDescription() != null
-				&& !item.getTitle().isEmpty()
-				&& !item.getDescription().isEmpty()) {
+	public boolean execute() {
+		if (title != null && description != null
+				&& !title.isEmpty()
+				&& !description.isEmpty()) {
+			Item item = new Item(username, title, description);
+			String itemId = UUID.randomUUID().toString();
+			put("item:" + itemId, item);
 
-			put("item:"+item.getId(), item);
-			
 			final HashSet<String> uniqueTokens = new HashSet<String>();
-			for (String token : item.getTitle().split(" ")) {
+			for (String token : title.split(" ")) {
 				uniqueTokens.add(token);
 			}
-			
+
 			for (String token : uniqueTokens) {
 				@SuppressWarnings("unchecked")
-				List<String> existingIndexs =  (List<String>) get("index:" + token);
-				
-				if(existingIndexs == null)
+				List<String> existingIndexs = (List<String>) get("index:"
+						+ token);
+
+				if (existingIndexs == null)
 					existingIndexs = new ArrayList<String>();
-				
-				existingIndexs.add(item.getId());
+
+				existingIndexs.add(itemId);
 				put("index:" + token, existingIndexs);
 			}
 			return true;

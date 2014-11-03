@@ -1,16 +1,40 @@
 package ist.p2p.service;
 
-import ist.p2p.dto.HistoryDto;
+import java.util.List;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class SearchItemService.
  */
-public class ViewUserHistoryService extends P2PBayService<HistoryDto> {
+public class ViewUserHistoryService extends P2PBayService {
 
 	/** The search. */
 	private String username;
 
+	
+	/** The bids. */
+	private List<String> bids;
+
+	/** The bids. */
+	private List<String> purchases;
+
+	/**
+	 * Gets the bids.
+	 *
+	 * @return the bids
+	 */
+	public List<String> getBids() {
+		return bids;
+	}
+
+	/**
+	 * Gets the bids.
+	 *
+	 * @return the bids
+	 */
+	public List<String> getPurchases() {
+		return purchases;
+	}
 	/**
 	 * Instantiates a new search item service.
 	 *
@@ -28,15 +52,10 @@ public class ViewUserHistoryService extends P2PBayService<HistoryDto> {
 	 * @see ist.p2p.service.P2PBayService#execute()
 	 */
 	@Override
-	public HistoryDto execute() {
-
-		final HistoryDto profile = (HistoryDto) get("hist" + username);
-		if (profile != null) {
-			return profile;
-		} else {
-			return new HistoryDto();
-		}
-
+	public boolean execute() {
+		bids = (List<String>) get("bids:" + username);
+		purchases = (List<String>) get("buys:" + username);		
+		return true;
 	}
 
 }

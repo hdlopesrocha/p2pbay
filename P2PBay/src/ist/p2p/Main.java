@@ -1,8 +1,8 @@
 package ist.p2p;
 
-import ist.p2p.domain.Item;
-import ist.p2p.dto.HistoryDto;
+import ist.p2p.dto.BidDto;
 import ist.p2p.dto.ItemDto;
+import ist.p2p.service.AcceptBidService;
 import ist.p2p.service.AuthenticateUserService;
 import ist.p2p.service.BidAnItemService;
 import ist.p2p.service.ConnectP2PBayService;
@@ -16,7 +16,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.List;
 import java.util.Scanner;
 
 // TODO: Auto-generated Javadoc
@@ -90,7 +89,6 @@ public class Main {
 	 *            the scanner
 	 */
 	public static void commandLine(Scanner scanner) {
-		System.out.println("***********************");
 		String username = "";
 		while (true) {
 
@@ -110,6 +108,7 @@ public class Main {
 		System.out.println("Authentication Succeded!");
 
 		while (true) {
+			System.out.println("************************************");
 			System.out.println("1) offer an item for sale");
 			System.out.println("2) accept a bid");
 			System.out.println("3) search for an item to buy");
@@ -141,6 +140,7 @@ public class Main {
 			} catch (NumberFormatException e) {
 				System.out.println("Invalid option!");
 			}
+
 		}
 
 		System.out.println("See you next time!");
@@ -170,6 +170,7 @@ public class Main {
 		} catch (NumberFormatException e) {
 			System.out.println("Invalid offer!");
 		}
+
 	}
 
 	/**
@@ -183,17 +184,17 @@ public class Main {
 	private static void viewHistoryMenu(String username, Scanner scanner) {
 		final ViewUserHistoryService userBidsService = new ViewUserHistoryService(
 				username);
-		HistoryDto user = userBidsService.execute();
+		if (userBidsService.execute()) {
 
-		System.out.println("--- BIDS HISTORY ---");
-		for (String str : user.getBids()) {
-			System.out.println(str);
+			System.out.println("### BIDS HISTORY ###");
+			for (String str : userBidsService.getBids()) {
+				System.out.println("\t" + str);
+			}
+			System.out.println("### PURCHASES HISTORY ###");
+			for (String str : userBidsService.getPurchases()) {
+				System.out.println("\t" + str);
+			}
 		}
-		System.out.println("--- PURCHASES HISTORY ---");
-		for (String str : user.getPurchases()) {
-			System.out.println(str);
-		}
-
 	}
 
 	/**
@@ -208,10 +209,15 @@ public class Main {
 		System.out.print("id: ");
 		final String id = scanner.nextLine();
 		final GetItemByIdService service = new GetItemByIdService(id);
-		final ItemDto result = service.execute();
-		if (result != null) {
-			System.out.println("------------------------");
-			System.out.println(result);
+		if (service.execute()) {
+			final ItemDto item = service.getItem();
+			System.out.println("title: " + item.getTitle());
+			System.out.println("description: " + item.getDescription());
+			System.out.println("bids: ");
+			for (BidDto bid : item.getBids()) {
+				System.out.println("\t" + bid.toString());
+			}
+
 		} else {
 			System.out.println("Item not found!");
 		}
@@ -226,8 +232,14 @@ public class Main {
 	 *            the scanner
 	 */
 	private static void acceptABidMenu(String username, Scanner scanner) {
-		// TODO Auto-generated method stub
-
+		System.out.print("id: ");
+		final String id = scanner.nextLine();
+		final AcceptBidService service = new AcceptBidService(username, id);
+		if (service.execute()) {
+			System.out.println("Bid accepted with success!");
+		} else {
+			System.out.println("Bid not accepted!");
+		}
 	}
 
 	/**
@@ -244,10 +256,9 @@ public class Main {
 		final String title = scanner.nextLine();
 		System.out.print("description: ");
 		final String description = scanner.nextLine();
-		final Item newItem = new Item(username, title, description);
 
 		final OfferAnItemForSaleService service = new OfferAnItemForSaleService(
-				newItem);
+				username, title, description);
 		if (service.execute()) {
 			System.out.println("Offered item with success!");
 		} else {
@@ -268,10 +279,10 @@ public class Main {
 		System.out.print("search: ");
 		final String search = scanner.nextLine();
 		final SearchAnItemService service = new SearchAnItemService(search);
-
-		final List<Item> items = service.execute();
-		for (Item item : items) {
-			System.out.println(item.toString());
+		if (service.execute()) {
+			for (ItemDto item : service.getItems()) {
+				System.out.println(item.getId() + " | " + item.getTitle());
+			}
 		}
 	}
 

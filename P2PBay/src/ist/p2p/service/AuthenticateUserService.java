@@ -1,13 +1,13 @@
 package ist.p2p.service;
 
 import ist.p2p.Utils;
-import ist.p2p.dto.AuthenticationDto;
+import ist.p2p.domain.Authentication;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class AuthenticateUserService.
  */
-public class AuthenticateUserService extends P2PBayService<Boolean> {
+public class AuthenticateUserService extends P2PBayService {
 
 	/** The username. */
 	private String username;
@@ -34,8 +34,8 @@ public class AuthenticateUserService extends P2PBayService<Boolean> {
 	 * @see ist.p2p.P2PBayService#execute()
 	 */
 	@Override
-	public Boolean execute() {
-		final AuthenticationDto auth = (AuthenticationDto) get("user:" + username);
+	public boolean execute() {
+		final Authentication auth = (Authentication) get("user:" + username);
 		if (auth != null) {
 			final String salt = auth.getSalt();
 			final String hash = auth.getHash();
