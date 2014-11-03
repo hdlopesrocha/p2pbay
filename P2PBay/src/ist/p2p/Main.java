@@ -68,14 +68,57 @@ public class Main {
 		List<String> contents = new ArrayList<String>();
 		contents.add("cenas");
 		contents.add("maradas");
+
+		System.out.println(
+				new LogicAnd(
+						new LogicString("cenas"),
+						new LogicString("maradas"))
+				.check(contents));
 		
-		System.out.println(new LogicAnd(new LogicString("cenas"),new LogicString("maradas")).check(contents) );
-		System.out.println(new LogicAnd(new LogicString("cenas"),new LogicString("fodidas")).check(contents) );
-		System.out.println(new LogicOr(new LogicString("cenas"),new LogicString("fodidas")).check(contents) );
-		System.out.println(new LogicOr(new LogicString("xpto"),new LogicString("fodidas")).check(contents) );
-		System.out.println(new LogicAnd(new LogicString("cenas"), new LogicNot(new LogicString("maradas"))).check(contents) );
-		System.out.println(new LogicAnd(new LogicString("cenas"), new LogicNot(new LogicString("fodidas"))).check(contents) );
+		System.out.println(
+				new LogicAnd(
+						new LogicString("cenas"),
+						new LogicString("fodidas"))
+				.check(contents));
 		
+		System.out.println(
+				new LogicOr(
+						new LogicString("cenas"),
+						new LogicString("fodidas"))
+				.check(contents));
+		
+		System.out.println(
+				new LogicOr(
+						new LogicString("xpto"),
+						new LogicString("fodidas"))
+				.check(contents));
+		
+		System.out.println(
+				new LogicAnd(
+						new LogicString("cenas"), 
+						new LogicNot(
+								new LogicString("maradas")))
+				.check(contents));
+		
+		System.out.println(
+				new LogicAnd(
+						new LogicString("cenas"), 
+						new LogicNot(
+								new LogicString("fodidas")))
+				.check(contents));
+
+		System.out.println(
+				new LogicOr( 
+						new LogicAnd(
+							new LogicString("cenas"), 
+							new LogicNot(
+								new LogicString("maradas"))
+							
+							),
+						new LogicAnd(
+								new LogicString("maradas")))
+				.check(contents));
+
 		
 		ConnectP2PBayService service;
 		final String ip = Utils.getArgValue("-i", args);
@@ -108,8 +151,6 @@ public class Main {
 	 */
 	public static void commandLine(Scanner scanner) {
 
-		
-		
 		String username = "";
 		while (true) {
 
