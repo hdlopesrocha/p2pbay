@@ -2,6 +2,10 @@ package ist.p2p;
 
 import ist.p2p.dto.BidDto;
 import ist.p2p.dto.ItemDto;
+import ist.p2p.logic.LogicAnd;
+import ist.p2p.logic.LogicNot;
+import ist.p2p.logic.LogicOr;
+import ist.p2p.logic.LogicString;
 import ist.p2p.service.AcceptBidService;
 import ist.p2p.service.AuthenticateUserService;
 import ist.p2p.service.BidAnItemService;
@@ -16,6 +20,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 // TODO: Auto-generated Javadoc
@@ -59,6 +65,18 @@ public class Main {
 	 */
 	public static void main(String[] args) throws IOException {
 
+		List<String> contents = new ArrayList<String>();
+		contents.add("cenas");
+		contents.add("maradas");
+		
+		System.out.println(new LogicAnd(new LogicString("cenas"),new LogicString("maradas")).check(contents) );
+		System.out.println(new LogicAnd(new LogicString("cenas"),new LogicString("fodidas")).check(contents) );
+		System.out.println(new LogicOr(new LogicString("cenas"),new LogicString("fodidas")).check(contents) );
+		System.out.println(new LogicOr(new LogicString("xpto"),new LogicString("fodidas")).check(contents) );
+		System.out.println(new LogicAnd(new LogicString("cenas"), new LogicNot(new LogicString("maradas"))).check(contents) );
+		System.out.println(new LogicAnd(new LogicString("cenas"), new LogicNot(new LogicString("fodidas"))).check(contents) );
+		
+		
 		ConnectP2PBayService service;
 		final String ip = Utils.getArgValue("-i", args);
 		if (ip != null) {
@@ -89,6 +107,9 @@ public class Main {
 	 *            the scanner
 	 */
 	public static void commandLine(Scanner scanner) {
+
+		
+		
 		String username = "";
 		while (true) {
 
