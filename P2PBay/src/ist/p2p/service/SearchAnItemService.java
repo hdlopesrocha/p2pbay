@@ -59,7 +59,7 @@ public class SearchAnItemService extends P2PBayService {
 		final TreeMap<String, List<String>> temp = new TreeMap<String, List<String>>(); // <fileId,
 																					// tokens>
 		for (String token : neededTokens) {
-			final List<String> indexs = (List<String>) get("index" , token);
+			final List<String> indexs = (List<String>) get(DOMAIN_WORD , token);
 			if (indexs != null) {
 				for (String f : indexs) {
 					List<String> ftokens = temp.get(f);
@@ -74,7 +74,7 @@ public class SearchAnItemService extends P2PBayService {
 
 		for (Entry<String, List<String>> fileTokens : temp.entrySet()) {
 			if (rootNode.check(fileTokens.getValue())) {
-				final Item product = (Item) get("item" , fileTokens.getKey());
+				final Item product = (Item) get(DOMAIN_ITEM , fileTokens.getKey());
 				if (product != null) {
 					items.add(new ItemDto(fileTokens.getKey(), product
 							.getOwner(), product.getTitle(), product

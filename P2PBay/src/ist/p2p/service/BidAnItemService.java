@@ -42,13 +42,13 @@ public class BidAnItemService extends P2PBayService {
 			put("bid", bidKey,bid);
 			
 			/* add to item userBids */
-			List<String> userBids = (List<String>) get("bids" , username);
+			List<String> userBids = (List<String>) get(DOMAIN_BIDS , username);
 			userBids.add(bidKey);
-			put("bids" , username, userBids);
+			put(DOMAIN_BIDS , username, userBids);
 
 			/* add to item bids */
 			item.getBids().put(bid.getOffer(),bidKey);
-			put("item" ,  id, item);
+			put(DOMAIN_ITEM,  id, item);
 			return true;
 		}
 		return false;

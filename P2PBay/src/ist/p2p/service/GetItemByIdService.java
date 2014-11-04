@@ -31,11 +31,11 @@ public class GetItemByIdService extends P2PBayService {
 	 */
 	@Override
 	public boolean execute() {
-		final Item concreteItem = (Item) get("item" , id);
+		final Item concreteItem = (Item) get(DOMAIN_ITEM, id);
 		item = new ItemDto(id,concreteItem.getOwner(), concreteItem.getTitle(),
 				concreteItem.getDescription());
 		for (String str : concreteItem.getBids().values()) {
-			final BidDto bid = (BidDto) get("bid" , str);
+			final BidDto bid = (BidDto) get(DOMAIN_BID , str);
 			item.getBids().add(bid);
 		}
 

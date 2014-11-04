@@ -44,12 +44,12 @@ public class AcceptBidService extends P2PBayService {
 			String lastBidId = item.getBids().lastEntry().getValue();
 			BidDto bid = (BidDto) get("bid" , lastBidId);
 
-			List<PurchaseDto> userBuys = (List<PurchaseDto>) get("buys" , bid.getUser());
+			List<PurchaseDto> userBuys = (List<PurchaseDto>) get(DOMAIN_PURCHASES , bid.getUser());
 			userBuys.add(new PurchaseDto(id, item.getTitle(), item.getDescription(), bid.getOffer()));
-			put("buys" , bid.getUser(),userBuys);
+			put(DOMAIN_PURCHASES , bid.getUser(),userBuys);
 			
 			item.close();
-			put("item", id,item);
+			put(DOMAIN_ITEM, id,item);
 			
 			return true;
 		}

@@ -3,13 +3,18 @@ package ist.p2p.service;
 import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.InetAddress;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Random;
 
 import net.tomp2p.connection.Bindings;
-import net.tomp2p.futures.FutureDHT;
 import net.tomp2p.futures.FutureDiscover;
+import net.tomp2p.futures.FutureGet;
+import net.tomp2p.futures.FuturePut;
 import net.tomp2p.p2p.Peer;
 import net.tomp2p.p2p.PeerMaker;
+import net.tomp2p.p2p.builder.AddBuilder;
 import net.tomp2p.p2p.builder.GetBuilder;
 import net.tomp2p.p2p.builder.PutBuilder;
 import net.tomp2p.peers.Number160;
@@ -34,6 +39,13 @@ public abstract class P2PBayService {
 	/** The peer. */
 	static protected Peer peer = null;
 
+	public static final String DOMAIN_AUTH = "auth";
+	public static final String DOMAIN_ITEM = "item";
+	public static final String DOMAIN_BID =  "bid";
+	public static final String DOMAIN_BIDS = "bids";
+	public static final String DOMAIN_PURCHASES = "purchases";
+	public static final String DOMAIN_WORD = "word";
+	
 	/**
 	 * Connect.
 	 *
@@ -52,20 +64,25 @@ public abstract class P2PBayService {
 		bindings.addInterface("eth0");
 		bindings.addInterface("wlan0");
 		bindings.addInterface("lo");
+		
 
-		peer = new PeerMaker(new Number160(random)).setPorts(myPeerPort)
-				.setBindings(bindings).makeAndListen();
-		peer.getConfiguration().setBehindFirewall(true);
+		peer = new PeerMaker(new Number160(random)).ports(myPeerPort)
+				.bindings(bindings).setEnableIndirectReplication(true).setBehindFirewall(true).makeAndListen();
+		//ConnectionConfiguration configuration = peer.getConfiguration();
 
+		//configuration.setBehindFirewall(true);
+		
 		if (ip != null) {
 			InetAddress address = Inet4Address.getByName(ip);
-			FutureDiscover futureDiscover = peer.discover()
-					.setInetAddress(address).setPorts(port).start();
+			FutureDiscover futureDiscover = peer.discover().inetSocketAddress(address,port).start();
 			futureDiscover.awaitUninterruptibly();
 		}
 		System.out.println("*** PORT " + myPeerPort + " ***");
 	}
 
+	
+
+	
 	/**
 	 * Gets the.
 	 *
@@ -73,17 +90,17 @@ public abstract class P2PBayService {
 	 *            the key
 	 * @return the object
 	 */
-	protected static Object get(String domain,String key) {
+	protected static Object get(final String domain, final String key) {
 		try {
-
-			Number160 locationKey = Number160.createHash(key);
-			Number160 domainKey = Number160.createHash(domain);
-			GetBuilder builder = peer.get(locationKey).setDomainKey(domainKey);
-			FutureDHT futureDHT = builder.start();
+			final Number160 locationKey = Number160.createHash(key);
+			final Number160 domainKey = Number160.createHash(domain);
+			final GetBuilder builder = peer.get(locationKey).setDomainKey(domainKey);
+			final FutureGet futureDHT = builder.start();
 			futureDHT.awaitUninterruptibly();
-			if (futureDHT.isSuccess()) {
-				return futureDHT.getData().getObject();
+			if(futureDHT.isSuccess()){
+				return futureDHT.getData().object();
 			}
+			
 		} catch (IOException | ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -99,14 +116,12 @@ public abstract class P2PBayService {
 	 * @param value
 	 *            the value
 	 */
-	protected static void put(String domain,String key, Object value) {
-
+	protected static void put(final String domain, final String key, final Object value) {
 		try {
-			Number160 locationKey = Number160.createHash(key);
-			Number160 domainKey = Number160.createHash(domain);
-			PutBuilder builder = peer.put(locationKey).setRefreshSeconds(5).setDirectReplication().setDomainKey(domainKey).setData(new Data(value).setTTLSeconds(30));
-			FutureDHT futureDHT = builder.start().awaitUninterruptibly();
-
+			final Number160 locationKey = Number160.createHash(key);
+			final Number160 domainKey = Number160.createHash(domain);
+			final PutBuilder builder = peer.put(locationKey).setDomainKey(domainKey).setData(new Data(value));
+			final FuturePut futureDHT = builder.start().awaitUninterruptibly();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -114,7 +129,9 @@ public abstract class P2PBayService {
 	}
 
 	
+
 	
+		
 
 	/**
 	 * Store.
@@ -124,6 +141,7 @@ public abstract class P2PBayService {
 	 * @param value
 	 *            the value
 	 */
+	/*
 	protected static void replace(String key, Object value) {
 
 		Number160 hash = Number160.createHash(key);
@@ -136,5 +154,5 @@ public abstract class P2PBayService {
 			e.printStackTrace();
 		}
 	}
-
+*/
 }

@@ -36,7 +36,7 @@ public class OfferAnItemForSaleService extends P2PBayService {
 				&& !description.isEmpty()) {
 			Item item = new Item(username, title, description);
 			String itemId = UUID.randomUUID().toString();
-			put("item" , itemId, item);
+			put(DOMAIN_ITEM , itemId, item);
 
 			final HashSet<String> uniqueTokens = new HashSet<String>();
 			for (String token : title.split(" ")) {
@@ -45,13 +45,13 @@ public class OfferAnItemForSaleService extends P2PBayService {
 
 			for (String token : uniqueTokens) {
 				@SuppressWarnings("unchecked")
-				List<String> existingIndexs = (List<String>) get("index", token);
+				List<String> existingIndexs = (List<String>) get(DOMAIN_WORD, token);
 
 				if (existingIndexs == null)
 					existingIndexs = new ArrayList<String>();
 
 				existingIndexs.add(itemId);
-				put("index", token, existingIndexs);
+				put(DOMAIN_WORD, token, existingIndexs);
 			}
 			return true;
 		}
