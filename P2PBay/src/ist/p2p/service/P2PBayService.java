@@ -100,7 +100,7 @@ public abstract class P2PBayService {
 				return futureDHT.getData().object();
 			}
 			
-		} catch (IOException | ClassNotFoundException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
