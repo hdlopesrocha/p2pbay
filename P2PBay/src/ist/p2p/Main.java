@@ -63,25 +63,6 @@ public class Main {
 	 */
 	public static void main(String[] args) throws IOException {
 
-		List<String> contents = new ArrayList<String>();
-		contents.add("cenas");
-		contents.add("maradas");
-
-		System.out.println(LogicNode.extractFromString("(and cenas maradas)")
-				.check(contents));
-		System.out.println(LogicNode.extractFromString("(and cenas fodidas)")
-				.check(contents));
-		System.out.println(LogicNode.extractFromString("(or cenas fodidas)")
-				.check(contents));
-		System.out.println(LogicNode.extractFromString("(or xpto fodidas)")
-				.check(contents));
-		System.out.println(LogicNode.extractFromString(
-				"(and cenas (not maradas))").check(contents));
-		System.out.println(LogicNode.extractFromString(
-				"(and cenas (not fodidas))").check(contents));
-		System.out.println(LogicNode.extractFromString(
-				"(or (and cenas (not maradas)) maradas)").check(contents));
-
 		ConnectP2PBayService service;
 		final String ip = Utils.getArgValue("-i", args);
 		if (ip != null) {
