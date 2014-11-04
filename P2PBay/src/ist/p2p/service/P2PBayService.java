@@ -10,6 +10,7 @@ import net.tomp2p.futures.FutureDHT;
 import net.tomp2p.futures.FutureDiscover;
 import net.tomp2p.p2p.Peer;
 import net.tomp2p.p2p.PeerMaker;
+import net.tomp2p.p2p.builder.GetBuilder;
 import net.tomp2p.p2p.builder.PutBuilder;
 import net.tomp2p.peers.Number160;
 import net.tomp2p.storage.Data;
@@ -53,8 +54,7 @@ public abstract class P2PBayService {
 		bindings.addInterface("lo");
 
 		peer = new PeerMaker(new Number160(random)).setPorts(myPeerPort)
-				.setBindings(bindings).setEnableIndirectReplication(true)
-				.makeAndListen();
+				.setBindings(bindings).makeAndListen();
 		peer.getConfiguration().setBehindFirewall(true);
 
 		if (ip != null) {
@@ -73,9 +73,13 @@ public abstract class P2PBayService {
 	 *            the key
 	 * @return the object
 	 */
-	protected static Object get(String key) {
+	protected static Object get(String domain,String key) {
 		try {
-			FutureDHT futureDHT = peer.get(Number160.createHash(key)).start();
+
+			Number160 locationKey = Number160.createHash(key);
+			Number160 domainKey = Number160.createHash(domain);
+			GetBuilder builder = peer.get(locationKey).setDomainKey(domainKey);
+			FutureDHT futureDHT = builder.start();
 			futureDHT.awaitUninterruptibly();
 			if (futureDHT.isSuccess()) {
 				return futureDHT.getData().getObject();
@@ -95,12 +99,14 @@ public abstract class P2PBayService {
 	 * @param value
 	 *            the value
 	 */
-	protected static void put(String key, Object value) {
+	protected static void put(String domain,String key, Object value) {
 
 		try {
-			PutBuilder builder = peer.put(Number160.createHash(key));
-			builder.setData(new Data(value).setTTLSeconds(30)).start()
-					.awaitUninterruptibly();
+			Number160 locationKey = Number160.createHash(key);
+			Number160 domainKey = Number160.createHash(domain);
+			PutBuilder builder = peer.put(locationKey).setRefreshSeconds(5).setDirectReplication().setDomainKey(domainKey).setData(new Data(value).setTTLSeconds(30));
+			FutureDHT futureDHT = builder.start().awaitUninterruptibly();
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -35,20 +35,20 @@ public class BidAnItemService extends P2PBayService {
 	 */
 	@Override
 	public boolean execute() {
-		final Item item = (Item) get("item:" + id);
+		final Item item = (Item) get("item", id);
 		if (item != null && !item.isClosed()) {
 			final String bidKey = UUID.randomUUID().toString();
 			final BidDto bid = new BidDto(offer, username, id);
-			put("bid:"+bidKey,bid);
+			put("bid", bidKey,bid);
 			
 			/* add to item userBids */
-			List<String> userBids = (List<String>) get("bids:" + username);
+			List<String> userBids = (List<String>) get("bids" , username);
 			userBids.add(bidKey);
-			put("bids:" + username, userBids);
+			put("bids" , username, userBids);
 
 			/* add to item bids */
 			item.getBids().put(bid.getOffer(),bidKey);
-			put("item:" +  id, item);
+			put("item" ,  id, item);
 			return true;
 		}
 		return false;

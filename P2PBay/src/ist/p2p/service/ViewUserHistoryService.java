@@ -1,8 +1,6 @@
 package ist.p2p.service;
 
-import ist.p2p.domain.Item;
 import ist.p2p.dto.BidDto;
-import ist.p2p.dto.ItemDto;
 import ist.p2p.dto.PurchaseDto;
 
 import java.util.ArrayList;
@@ -59,17 +57,17 @@ public class ViewUserHistoryService extends P2PBayService {
 	 */
 	@Override
 	public boolean execute() {
-		List<String> bidIds = (List<String>) get("bids:" + username);
+		List<String> bidIds = (List<String>) get("bids" , username);
 		
 		bids = new ArrayList<BidDto>();
 		for(String bidId: bidIds){
-			BidDto bid =(BidDto) get("bid:" + bidId);
+			BidDto bid =(BidDto) get("bid" , bidId);
 			if(bid!=null){
 				bids.add(bid);
 			}
 		}
 		
-		purchases  = (List<PurchaseDto>) get("buys:" + username);		
+		purchases  = (List<PurchaseDto>) get("buys" , username);		
 
 		
 		

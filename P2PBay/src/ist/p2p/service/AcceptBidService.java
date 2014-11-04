@@ -38,18 +38,18 @@ public class AcceptBidService extends P2PBayService {
 	 */
 	@Override
 	public boolean execute() {
-		final Item item = (Item) get("item:" + id);
+		final Item item = (Item) get("item", id);
 		if (item != null && !item.isClosed() && item.getOwner().equals(username) && item.getBids().size()>0) {
 
 			String lastBidId = item.getBids().lastEntry().getValue();
-			BidDto bid = (BidDto) get("bid:" + lastBidId);
+			BidDto bid = (BidDto) get("bid" , lastBidId);
 
-			List<PurchaseDto> userBuys = (List<PurchaseDto>) get("buys:" + bid.getUser());
+			List<PurchaseDto> userBuys = (List<PurchaseDto>) get("buys" , bid.getUser());
 			userBuys.add(new PurchaseDto(id, item.getTitle(), item.getDescription(), bid.getOffer()));
-			put("buys:" + bid.getUser(),userBuys);
+			put("buys" , bid.getUser(),userBuys);
 			
 			item.close();
-			put("item:" + id,item);
+			put("item", id,item);
 			
 			return true;
 		}
