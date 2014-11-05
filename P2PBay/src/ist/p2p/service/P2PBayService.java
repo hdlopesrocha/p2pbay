@@ -3,9 +3,6 @@ package ist.p2p.service;
 import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.InetAddress;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import java.util.Random;
 
 import net.tomp2p.connection.Bindings;
@@ -14,7 +11,6 @@ import net.tomp2p.futures.FutureGet;
 import net.tomp2p.futures.FuturePut;
 import net.tomp2p.p2p.Peer;
 import net.tomp2p.p2p.PeerMaker;
-import net.tomp2p.p2p.builder.AddBuilder;
 import net.tomp2p.p2p.builder.GetBuilder;
 import net.tomp2p.p2p.builder.PutBuilder;
 import net.tomp2p.peers.Number160;
@@ -116,6 +112,7 @@ public abstract class P2PBayService {
 	 * @param value
 	 *            the value
 	 */
+	@SuppressWarnings("unused")
 	protected static void put(final String domain, final String key, final Object value) {
 		try {
 			final Number160 locationKey = Number160.createHash(key);

@@ -30,6 +30,7 @@ public class OfferAnItemForSaleService extends P2PBayService {
 	 * 
 	 * @see ist.p2p.service.P2PBayService#execute()
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean execute() {
 		if (title != null && description != null
@@ -47,7 +48,6 @@ public class OfferAnItemForSaleService extends P2PBayService {
 			}
 
 			for (String token : uniqueTokens) {
-				@SuppressWarnings("unchecked")
 				List<String> existingIndexs = (List<String>) get(DOMAIN_WORD, token);
 
 				if (existingIndexs == null)

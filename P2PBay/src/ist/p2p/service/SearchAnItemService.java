@@ -48,6 +48,7 @@ public class SearchAnItemService extends P2PBayService {
 	 * 
 	 * @see ist.p2p.service.P2PBayService#execute()
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean execute() {
 		items = new ArrayList<ItemDto>();

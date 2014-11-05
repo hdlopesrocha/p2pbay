@@ -34,6 +34,7 @@ public class BidAnItemService extends P2PBayService {
 	 * 
 	 * @see ist.p2p.service.P2PBayService#execute()
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean execute() {
 		final Item item = (Item) get("item", id);

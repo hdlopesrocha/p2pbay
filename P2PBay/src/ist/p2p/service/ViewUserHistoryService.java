@@ -55,6 +55,7 @@ public class ViewUserHistoryService extends P2PBayService {
 	 * 
 	 * @see ist.p2p.service.P2PBayService#execute()
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean execute() {
 		List<String> bidIds = (List<String>) get(DOMAIN_USER_BIDS , username);
