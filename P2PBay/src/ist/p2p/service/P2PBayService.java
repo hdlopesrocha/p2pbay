@@ -42,7 +42,8 @@ public abstract class P2PBayService {
 	public static final String DOMAIN_AUTH = "auth";
 	public static final String DOMAIN_ITEM = "item";
 	public static final String DOMAIN_BID =  "bid";
-	public static final String DOMAIN_BIDS = "bids";
+	public static final String DOMAIN_USER_BIDS = "user_bids";
+	public static final String DOMAIN_ITEM_BIDS = "item_bids";
 	public static final String DOMAIN_PURCHASES = "purchases";
 	public static final String DOMAIN_WORD = "word";
 	

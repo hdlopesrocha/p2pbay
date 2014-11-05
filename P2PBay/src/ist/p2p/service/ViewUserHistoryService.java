@@ -57,7 +57,7 @@ public class ViewUserHistoryService extends P2PBayService {
 	 */
 	@Override
 	public boolean execute() {
-		List<String> bidIds = (List<String>) get(DOMAIN_BIDS , username);
+		List<String> bidIds = (List<String>) get(DOMAIN_USER_BIDS , username);
 		
 		bids = new ArrayList<BidDto>();
 		for(String bidId: bidIds){

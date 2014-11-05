@@ -5,6 +5,7 @@ import ist.p2p.dto.BidDto;
 import ist.p2p.dto.PurchaseDto;
 
 import java.util.List;
+import java.util.TreeMap;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -38,11 +39,14 @@ public class AcceptBidService extends P2PBayService {
 	 */
 	@Override
 	public boolean execute() {
-		final Item item = (Item) get("item", id);
-		if (item != null && !item.isClosed() && item.getOwner().equals(username) && item.getBids().size()>0) {
+		final Item item = (Item) get(DOMAIN_ITEM, id);
+		final TreeMap<Float,String> itemBids = (TreeMap<Float, String>) get(DOMAIN_ITEM_BIDS, id);
+		
+		
+		if (item != null && !item.isClosed() && item.getOwner().equals(username) && itemBids != null && itemBids.size()>0) {
 
-			String lastBidId = item.getBids().lastEntry().getValue();
-			BidDto bid = (BidDto) get("bid" , lastBidId);
+			String lastBidId = itemBids.lastEntry().getValue();
+			BidDto bid = (BidDto) get(DOMAIN_BID , lastBidId);
 
 			List<PurchaseDto> userBuys = (List<PurchaseDto>) get(DOMAIN_PURCHASES , bid.getUser());
 			userBuys.add(new PurchaseDto(id, item.getTitle(), item.getDescription(), bid.getOffer()));

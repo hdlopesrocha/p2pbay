@@ -1,7 +1,6 @@
 package ist.p2p.domain;
 
 import java.io.Serializable;
-import java.util.TreeMap;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -22,8 +21,6 @@ public class Item implements Serializable {
 	private String description;
 
 
-	/** The bids. */
-	private TreeMap<Float,String> bids;
 
 	
 	private boolean closed;
@@ -34,17 +31,8 @@ public class Item implements Serializable {
 	public Item() {
 		super();
 		closed = false;
-		bids = new TreeMap<Float,String>();
 	}
 
-	/**
-	 * Gets the bids.
-	 *
-	 * @return the bids
-	 */
-	public TreeMap<Float,String> getBids() {
-		return bids;
-	}
 
 	/**
 	 * Instantiates a new item dto.
@@ -62,7 +50,6 @@ public class Item implements Serializable {
 		this.title = title;
 		this.description = description;
 		closed = false;
-		this.bids = new TreeMap<Float,String>();
 	}
 
 	public boolean isClosed(){

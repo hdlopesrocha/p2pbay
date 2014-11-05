@@ -41,7 +41,7 @@ public class RegisterUserService extends P2PBayService {
 		final String salt = Utils.randomString(16);
 		final String hash = Utils.sha1(salt + password);
 		put(DOMAIN_AUTH , username, new Authentication(salt, hash));
-		put(DOMAIN_BIDS , username, new ArrayList<String>());
+		put(DOMAIN_USER_BIDS , username, new ArrayList<String>());
 		put(DOMAIN_PURCHASES , username, new ArrayList<String>());
 		return true;
 	}

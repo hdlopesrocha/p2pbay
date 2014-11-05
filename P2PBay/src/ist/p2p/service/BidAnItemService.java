@@ -4,6 +4,7 @@ import ist.p2p.domain.Item;
 import ist.p2p.dto.BidDto;
 
 import java.util.List;
+import java.util.TreeMap;
 import java.util.UUID;
 
 /**
@@ -36,19 +37,23 @@ public class BidAnItemService extends P2PBayService {
 	@Override
 	public boolean execute() {
 		final Item item = (Item) get("item", id);
+		
+		
 		if (item != null && !item.isClosed()) {
 			final String bidKey = UUID.randomUUID().toString();
 			final BidDto bid = new BidDto(offer, username, id);
 			put("bid", bidKey,bid);
 			
 			/* add to item userBids */
-			List<String> userBids = (List<String>) get(DOMAIN_BIDS , username);
+			List<String> userBids = (List<String>) get(DOMAIN_USER_BIDS , username);
 			userBids.add(bidKey);
-			put(DOMAIN_BIDS , username, userBids);
+			put(DOMAIN_USER_BIDS , username, userBids);
 
 			/* add to item bids */
-			item.getBids().put(bid.getOffer(),bidKey);
-			put(DOMAIN_ITEM,  id, item);
+			final TreeMap<Float,String> itemBids = (TreeMap<Float, String>) get(DOMAIN_ITEM_BIDS, id);
+			
+			itemBids.put(bid.getOffer(),bidKey);
+			put(DOMAIN_ITEM_BIDS,  id, itemBids);
 			return true;
 		}
 		return false;

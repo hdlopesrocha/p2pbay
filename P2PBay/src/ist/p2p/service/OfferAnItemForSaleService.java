@@ -5,6 +5,7 @@ import ist.p2p.domain.Item;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.TreeMap;
 import java.util.UUID;
 
 // TODO: Auto-generated Javadoc
@@ -37,7 +38,9 @@ public class OfferAnItemForSaleService extends P2PBayService {
 			Item item = new Item(username, title, description);
 			String itemId = UUID.randomUUID().toString();
 			put(DOMAIN_ITEM , itemId, item);
-
+			put(DOMAIN_ITEM_BIDS, itemId, new TreeMap<Float,String>());
+			
+			
 			final HashSet<String> uniqueTokens = new HashSet<String>();
 			for (String token : title.split(" ")) {
 				uniqueTokens.add(token);
