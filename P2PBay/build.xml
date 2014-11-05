@@ -1,71 +1,65 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- WARNING: Eclipse auto-generated file.
-              Any modifications will be overwritten.
-              To include a user specific buildfile here, simply create one in the same
-              directory with the processing instruction <?eclipse.ant.import?>
-              as the first entry and export the buildfile again. --><project basedir="." default="build" name="P2PBay">
-    <property environment="env"/>
-    <property name="ECLIPSE_HOME" value="../../../../opt/eclipse/"/>
-    <property name="debuglevel" value="source,lines,vars"/>
-    <property name="target" value="1.6"/>
-    <property name="source" value="1.6"/>
-    <path id="P2PBay.classpath">
-        <pathelement location="bin"/>
-        <pathelement location="lib/slf4j-nop-1.6.4.jar"/>
-        <pathelement location="lib/tomp2p-all-5.0-Alpha10.jar"/>
-        <pathelement location="lib/netty-buffer-4.0.19.Final.jar"/>
-        <pathelement location="lib/netty-common-4.0.19.Final.jar"/>
-        <pathelement location="lib/netty-transport-4.0.19.Final.jar"/>
-        <pathelement location="lib/tomp2p-core-5.0-Alpha10.jar"/>
-        <pathelement location="lib/tomp2p-examples-5.0-Alpha10.jar"/>
-        <pathelement location="lib/tomp2p-nat-5.0-Alpha10.jar"/>
-        <pathelement location="lib/tomp2p-replication-5.0-Alpha10.jar"/>
-        <pathelement location="lib/hamcrest-core-1.1.jar"/>
-        <pathelement location="lib/jdbm-3.0-alpha.jar"/>
-        <pathelement location="lib/json-simple-1.1.1.jar"/>
-        <pathelement location="lib/junit-4.10.jar"/>
-        <pathelement location="lib/logback-core-1.0.1.jar"/>
-        <pathelement location="lib/netty-3.5.3.Patched.jar"/>
-        <pathelement location="lib/slf4j-api-1.6.4.jar"/>
-    </path>
-    <target name="init">
-        <mkdir dir="bin"/>
-        <copy includeemptydirs="false" todir="bin">
-            <fileset dir="src">
-                <exclude name="**/*.java"/>
-            </fileset>
-        </copy>
-    </target>
-    <target name="clean">
-        <delete dir="bin"/>
-    </target>
-    <target depends="clean" name="cleanall"/>
-    <target depends="build-subprojects,build-project" name="build"/>
-    <target name="build-subprojects"/>
-    <target depends="init" name="build-project">
-        <echo message="${ant.project.name}: ${ant.file}"/>
-        <javac debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
-            <src path="src"/>
-            <classpath refid="P2PBay.classpath"/>
-        </javac>
-    </target>
-    <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
-    <target description="copy Eclipse compiler jars to ant lib directory" name="init-eclipse-compiler">
-        <copy todir="${ant.library.dir}">
-            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
-        </copy>
-        <unzip dest="${ant.library.dir}">
-            <patternset includes="jdtCompilerAdapter.jar"/>
-            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
-        </unzip>
-    </target>
-    <target description="compile project with Eclipse compiler" name="build-eclipse-compiler">
-        <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
-        <antcall target="build"/>
-    </target>
-    <target name="main">
-        <java classname="ist.p2p.Main" failonerror="true" fork="yes">
-            <classpath refid="P2PBay.classpath"/>
-        </java>
-    </target>
+<project basedir="." default="build" name="P2PBay">
+	<property environment="env" />
+	<property name="lib.dir" value="${basedir}/lib" />
+	<property name="build.dir" value="${basedir}/bin" />
+	<property name="build.classes" value="${build.dir}/classes" />
+	<property name="src.dir" value="${basedir}/src" />
+	<property name="build.encoding" value="UTF-8" />
+	<property name="javac.debug" value="on" />
+	<property name="javac.optimize" value="on" />
+	<property name="jar-name" value="p2pbay" />
+	<property name="main-class" value="ist.p2p.Main" />
+	<property name="java-args1" value="-u users.txt" />
+	<property name="java-args2" value="-i localhost:1024" />
+
+	<path id="classpath">
+		<pathelement location="${build.classes}" />
+		<fileset dir="${lib.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+	<target name="init">
+		<mkdir dir="${build.dir}" />
+		<mkdir dir="${build.classes}" />
+	</target>
+
+	<target name="clean">
+		<delete dir="${build.dir}" />
+		<delete dir="${build.classes}" includeEmptyDirs="true" followSymlinks="false" />
+	</target>
+
+	<target name="build" depends="clean,init" description="compile mobile-net classes">
+		<javac encoding="${build.encoding}" srcdir="${src.dir}" includes="**/*.java" destdir="${build.classes}" optimize="${javac.optimize}" debug="${javac.debug}" includeantruntime="false">
+			<classpath refid="classpath" />
+		</javac>
+		<unjar dest="${build.classes}">
+			<patternset>
+				<include name="**/*" />
+			</patternset>
+			<fileset dir="${lib.dir}" includes="*.jar" excludes="TomP2P*" />
+		</unjar>
+	</target>
+
+	<target name="jar" depends="build" description="Make jar">
+		<property name="jar.properties.list" value="log4j.properties, slf4.properties" />
+		<jar jarfile="${build.dir}/${jar-name}.jar" basedir="${build.classes}">
+			<manifest>
+				<attribute name="Main-Class" value="${main-class}" />
+			</manifest>
+		</jar>
+	</target>
+
+	<target name="run-Bootstrap" >
+		<java jar="${build.dir}/${jar-name}.jar" fork="true">
+			<arg line="${java-args1}" />
+		</java>
+	</target>
+
+	<target name="run-Peers" >
+		<java jar="${build.dir}/${jar-name}.jar" fork="true">
+			<arg line="${java-args2}" />
+		</java>
+	</target>
 </project>
