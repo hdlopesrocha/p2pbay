@@ -30,7 +30,7 @@ public class Item implements Serializable {
 	 */
 	public Item() {
 		super();
-		closed = false;
+		this.closed = false;
 	}
 
 
@@ -49,15 +49,15 @@ public class Item implements Serializable {
 		this.owner = owner;
 		this.title = title;
 		this.description = description;
-		closed = false;
+		this.closed = false;
 	}
 
 	public boolean isClosed(){
-		return closed;
+		return this.closed;
 	}
 	
 	public void close(){
-		closed = true;
+		this.closed = true;
 	}
 	
 	/**

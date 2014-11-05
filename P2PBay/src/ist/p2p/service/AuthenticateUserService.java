@@ -3,6 +3,8 @@ package ist.p2p.service;
 import ist.p2p.Utils;
 import ist.p2p.domain.Authentication;
 
+import java.util.List;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Class AuthenticateUserService.
@@ -35,6 +37,7 @@ public class AuthenticateUserService extends P2PBayService {
 	 */
 	@Override
 	public boolean execute() {
+		
 		final Authentication auth = (Authentication) get(DOMAIN_AUTH, username);
 		if (auth != null) {
 			final String salt = auth.getSalt();

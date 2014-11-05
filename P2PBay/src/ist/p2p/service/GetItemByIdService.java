@@ -4,7 +4,7 @@ import ist.p2p.domain.Item;
 import ist.p2p.dto.BidDto;
 import ist.p2p.dto.ItemDto;
 
-import java.util.TreeMap;
+import java.util.List;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -31,18 +31,18 @@ public class GetItemByIdService extends P2PBayService {
 	 * 
 	 * @see ist.p2p.service.P2PBayService#execute()
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public boolean execute() {
 		final Item concreteItem = (Item) get(DOMAIN_ITEM, id);
-		final TreeMap<Float,String> itemBids = (TreeMap<Float, String>) get(DOMAIN_ITEM_BIDS, id);
+		final List<Object> itemBids = getAll(DOMAIN_ITEM_BIDS, id);
 		
 		item = new ItemDto(id,concreteItem.getOwner(), concreteItem.getTitle(),
 				concreteItem.getDescription());
 		
 		
 		
-		for (String str : itemBids.values()) {
+		for (Object obj : itemBids) {
+			String str = (String) obj;
 			final BidDto bid = (BidDto) get(DOMAIN_BID , str);
 			item.getBids().add(bid);
 		}

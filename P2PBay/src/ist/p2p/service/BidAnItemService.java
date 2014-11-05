@@ -34,7 +34,6 @@ public class BidAnItemService extends P2PBayService {
 	 * 
 	 * @see ist.p2p.service.P2PBayService#execute()
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public boolean execute() {
 		final Item item = (Item) get("item", id);
@@ -46,15 +45,10 @@ public class BidAnItemService extends P2PBayService {
 			put("bid", bidKey,bid);
 			
 			/* add to item userBids */
-			List<String> userBids = (List<String>) get(DOMAIN_USER_BIDS , username);
-			userBids.add(bidKey);
-			put(DOMAIN_USER_BIDS , username, userBids);
+			add(DOMAIN_USER_BIDS , username, bidKey);
 
 			/* add to item bids */
-			final TreeMap<Float,String> itemBids = (TreeMap<Float, String>) get(DOMAIN_ITEM_BIDS, id);
-			
-			itemBids.put(bid.getOffer(),bidKey);
-			put(DOMAIN_ITEM_BIDS,  id, itemBids);
+			add(DOMAIN_ITEM_BIDS,  id, bidKey);
 			return true;
 		}
 		return false;

@@ -30,7 +30,6 @@ public class OfferAnItemForSaleService extends P2PBayService {
 	 * 
 	 * @see ist.p2p.service.P2PBayService#execute()
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public boolean execute() {
 		if (title != null && description != null
@@ -39,7 +38,6 @@ public class OfferAnItemForSaleService extends P2PBayService {
 			Item item = new Item(username, title, description);
 			String itemId = UUID.randomUUID().toString();
 			put(DOMAIN_ITEM , itemId, item);
-			put(DOMAIN_ITEM_BIDS, itemId, new TreeMap<Float,String>());
 			
 			
 			final HashSet<String> uniqueTokens = new HashSet<String>();
@@ -48,13 +46,7 @@ public class OfferAnItemForSaleService extends P2PBayService {
 			}
 
 			for (String token : uniqueTokens) {
-				List<String> existingIndexs = (List<String>) get(DOMAIN_WORD, token);
-
-				if (existingIndexs == null)
-					existingIndexs = new ArrayList<String>();
-
-				existingIndexs.add(itemId);
-				put(DOMAIN_WORD, token, existingIndexs);
+				add(DOMAIN_WORD, token, itemId);
 			}
 			return true;
 		}

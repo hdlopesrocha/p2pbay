@@ -3,6 +3,8 @@ package ist.p2p.service;
 import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.InetAddress;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import net.tomp2p.connection.Bindings;
@@ -11,6 +13,7 @@ import net.tomp2p.futures.FutureGet;
 import net.tomp2p.futures.FuturePut;
 import net.tomp2p.p2p.Peer;
 import net.tomp2p.p2p.PeerMaker;
+import net.tomp2p.p2p.builder.AddBuilder;
 import net.tomp2p.p2p.builder.GetBuilder;
 import net.tomp2p.p2p.builder.PutBuilder;
 import net.tomp2p.peers.Number160;
@@ -42,6 +45,7 @@ public abstract class P2PBayService {
 	public static final String DOMAIN_ITEM_BIDS = "item_bids";
 	public static final String DOMAIN_PURCHASES = "purchases";
 	public static final String DOMAIN_WORD = "word";
+	static Random random = new Random();
 	
 	/**
 	 * Connect.
@@ -54,7 +58,6 @@ public abstract class P2PBayService {
 	 *             Signals that an I/O exception has occurred.
 	 */
 	protected static void connect(String ip, int port) throws IOException {
-		Random random = new Random();
 		int myPeerPort = ip == null ? 1024 : 1025 + random.nextInt(60000);
 
 		Bindings bindings = new Bindings();
@@ -104,6 +107,9 @@ public abstract class P2PBayService {
 		return null;
 	}
 
+	
+	
+	
 	/**
 	 * Store.
 	 *
@@ -127,8 +133,64 @@ public abstract class P2PBayService {
 
 	
 
+	/**
+	 * Store.
+	 *
+	 * @param key
+	 *            the key
+	 * @param value
+	 *            the value
+	 */
+	@SuppressWarnings("unused")
+	protected static void add(final String domain, final String key, final Object value) {
+		try {
+			final Number160 locationKey = Number160.createHash(key);
+			final Number160 domainKey = Number160.createHash(domain);
+			final AddBuilder builder = peer.add(locationKey).setList(true).setDomainKey(domainKey).setObject(value).setVersionKey(new Number160(random));
+			final FuturePut futureDHT = builder.start().awaitUninterruptibly();
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
+	
+	/**
+	 * Gets the.
+	 *
+	 * @param key
+	 *            the key
+	 * @return the object
+	 */
+	protected static List<Object> getAll(final String domain, final String key) {
+		List<Object> ret = new ArrayList<Object>();
 		
+		try {
+			final Number160 locationKey = Number160.createHash(key);
+			final Number160 domainKey = Number160.createHash(domain);
+			final GetBuilder builder = peer.get(locationKey).setAll(true).setDomainKey(domainKey);
+			final FutureGet futureDHT = builder.start();
+			futureDHT.awaitUninterruptibly();
+			if(futureDHT.isSuccess()){
+				for(Data d : futureDHT.getDataMap().values())				
+				{
+					ret.add(d.object());
+				}
+			}
+			else {
+				System.out.println("error!");
+			}
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return ret;
+	}
+	
+	
+	
 
 	/**
 	 * Store.

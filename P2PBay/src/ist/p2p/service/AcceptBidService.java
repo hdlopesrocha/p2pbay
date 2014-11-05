@@ -41,12 +41,11 @@ public class AcceptBidService extends P2PBayService {
 	@Override
 	public boolean execute() {
 		final Item item = (Item) get(DOMAIN_ITEM, id);
-		final TreeMap<Float,String> itemBids = (TreeMap<Float, String>) get(DOMAIN_ITEM_BIDS, id);
+		final List<Object> itemBids =  getAll(DOMAIN_ITEM_BIDS, id);
 		
 		
 		if (item != null && !item.isClosed() && item.getOwner().equals(username) && itemBids != null && itemBids.size()>0) {
-
-			String lastBidId = itemBids.lastEntry().getValue();
+			String lastBidId = (String) itemBids.get(itemBids.size()-1);
 			BidDto bid = (BidDto) get(DOMAIN_BID , lastBidId);
 
 			List<PurchaseDto> userBuys = (List<PurchaseDto>) get(DOMAIN_PURCHASES , bid.getUser());

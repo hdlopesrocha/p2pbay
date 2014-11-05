@@ -58,11 +58,11 @@ public class ViewUserHistoryService extends P2PBayService {
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean execute() {
-		List<String> bidIds = (List<String>) get(DOMAIN_USER_BIDS , username);
+		List<Object> bidIds =  getAll(DOMAIN_USER_BIDS , username);
 		
 		bids = new ArrayList<BidDto>();
-		for(String bidId: bidIds){
-			BidDto bid =(BidDto) get(DOMAIN_BID, bidId);
+		for(Object bidId: bidIds){
+			BidDto bid =(BidDto) get(DOMAIN_BID, (String) bidId);
 			if(bid!=null){
 				bids.add(bid);
 			}

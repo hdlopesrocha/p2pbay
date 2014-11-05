@@ -48,7 +48,6 @@ public class SearchAnItemService extends P2PBayService {
 	 * 
 	 * @see ist.p2p.service.P2PBayService#execute()
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public boolean execute() {
 		items = new ArrayList<ItemDto>();
@@ -57,25 +56,27 @@ public class SearchAnItemService extends P2PBayService {
 		final LogicNode rootNode = LogicNode.extractFromString(search);
 		rec(neededTokens, rootNode);
 
-		final TreeMap<String, List<String>> temp = new TreeMap<String, List<String>>(); // <fileId,
-																					// tokens>
+		final TreeMap<String, List<String>> itemWords = new TreeMap<String, List<String>>(); // <fileId, tokens>
+		
+		
 		for (String token : neededTokens) {
-			final List<String> indexs = (List<String>) get(DOMAIN_WORD , token);
-			if (indexs != null) {
-				for (String f : indexs) {
-					List<String> ftokens = temp.get(f);
-					if (ftokens == null) {
-						ftokens = new ArrayList<String>();
-						temp.put(f, ftokens);
-					}
-					ftokens.add(token);
+		
+			final List<Object> itemIds = getAll(DOMAIN_WORD, token);
+			for (Object obj : itemIds) {
+				String itemId = (String) obj;
+				List<String> words = itemWords.get(itemId);
+				if (words == null) {
+					words = new ArrayList<String>();
+					itemWords.put(itemId, words);
 				}
+				words.add(token);
 			}
 		}
 
-		for (Entry<String, List<String>> fileTokens : temp.entrySet()) {
+		for (Entry<String, List<String>> fileTokens : itemWords.entrySet()) {
 			if (rootNode.check(fileTokens.getValue())) {
-				final Item product = (Item) get(DOMAIN_ITEM , fileTokens.getKey());
+				final Item product = (Item) get(DOMAIN_ITEM,
+						fileTokens.getKey());
 				if (product != null) {
 					items.add(new ItemDto(fileTokens.getKey(), product
 							.getOwner(), product.getTitle(), product
