@@ -46,9 +46,7 @@ public class BidAnItemService extends P2PBayService {
 			put("bid", bidKey,bid);
 			
 			/* add to item userBids */
-			List<String> userBids = (List<String>) get(DOMAIN_USER_BIDS , username);
-			userBids.add(bidKey);
-			put(DOMAIN_USER_BIDS , username, userBids);
+			add(DOMAIN_USER_BIDS , username, bidKey);
 
 			/* add to item bids */
 			final TreeMap<Float,String> itemBids = (TreeMap<Float, String>) get(DOMAIN_ITEM_BIDS, id);
