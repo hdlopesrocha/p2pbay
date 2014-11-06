@@ -48,13 +48,7 @@ public class OfferAnItemForSaleService extends P2PBayService {
 			}
 
 			for (String token : uniqueTokens) {
-				List<String> existingIndexs = (List<String>) get(DOMAIN_WORD, token);
-
-				if (existingIndexs == null)
-					existingIndexs = new ArrayList<String>();
-
-				existingIndexs.add(itemId);
-				put(DOMAIN_WORD, token, existingIndexs);
+				add(DOMAIN_WORD, token, itemId);
 			}
 			return true;
 		}

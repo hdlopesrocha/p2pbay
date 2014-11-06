@@ -1,9 +1,10 @@
 package ist.p2p;
 
+import io.netty.util.ResourceLeakDetector;
+import io.netty.util.ResourceLeakDetector.Level;
 import ist.p2p.dto.BidDto;
 import ist.p2p.dto.ItemDto;
 import ist.p2p.dto.PurchaseDto;
-import ist.p2p.logic.LogicNode;
 import ist.p2p.service.AcceptBidService;
 import ist.p2p.service.AuthenticateUserService;
 import ist.p2p.service.BidAnItemService;
@@ -18,8 +19,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
 // TODO: Auto-generated Javadoc
@@ -62,7 +61,7 @@ public class Main {
 	 *             Signals that an I/O exception has occurred.
 	 */
 	public static void main(String[] args) throws IOException {
-
+		ResourceLeakDetector.setLevel(Level.DISABLED);
 		ConnectP2PBayService service;
 		final String ip = Utils.getArgValue("-i", args);
 		if (ip != null) {
