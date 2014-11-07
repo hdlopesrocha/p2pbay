@@ -55,7 +55,6 @@ public class ViewUserHistoryService extends P2PBayService {
 	 * 
 	 * @see ist.p2p.service.P2PBayService#execute()
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public boolean execute() {
 		List<Object> bidIds = getAll(DOMAIN_USER_BIDS , username);
@@ -67,8 +66,10 @@ public class ViewUserHistoryService extends P2PBayService {
 				bids.add(bid);
 			}
 		}
-		
-		purchases  = (List<PurchaseDto>) get(DOMAIN_PURCHASES , username);		
+		purchases = new ArrayList<PurchaseDto>();
+		for(Object obj : getAll(DOMAIN_PURCHASES , username)){
+			purchases.add((PurchaseDto) obj);
+		}
 
 		
 		
