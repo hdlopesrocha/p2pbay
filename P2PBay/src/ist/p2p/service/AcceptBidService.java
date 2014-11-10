@@ -40,19 +40,21 @@ public class AcceptBidService extends P2PBayService {
 	public boolean execute() {
 		final Item item = (Item) get(DOMAIN_ITEM, id);
 		final List<Object> itemBids = getAll(DOMAIN_ITEM_BIDS, id);
-		
-		
-		if (item != null && !item.isClosed() && item.getOwner().equals(username) && itemBids != null && itemBids.size()>0) {
+
+		if (item != null && !item.isClosed()
+				&& item.getOwner().equals(username) && itemBids != null
+				&& itemBids.size() > 0) {
 
 			String lastBidId = (String) itemBids.get(0);
-			BidDto bid = (BidDto) get(DOMAIN_BID , lastBidId);
+			BidDto bid = (BidDto) get(DOMAIN_BID, lastBidId);
 
-	
-			add(DOMAIN_PURCHASES , bid.getUser(),new PurchaseDto(id, item.getTitle(), item.getDescription(), bid.getOffer()));
-			
+			add(DOMAIN_PURCHASES, bid.getUser(),
+					new PurchaseDto(id, item.getTitle(), item.getDescription(),
+							bid.getOffer()));
+
 			item.close();
-			set(DOMAIN_ITEM, id,item);
-			
+			set(DOMAIN_ITEM, id, item);
+
 			return true;
 		}
 

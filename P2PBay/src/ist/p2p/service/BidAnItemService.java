@@ -5,6 +5,7 @@ import ist.p2p.dto.BidDto;
 
 import java.util.UUID;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class SearchItemService.
  */
@@ -12,14 +13,22 @@ public class BidAnItemService extends P2PBayService {
 
 	/** The search. */
 	private String id;
+
+	/** The offer. */
 	private float offer;
+
+	/** The username. */
 	private String username;
 
 	/**
 	 * Instantiates a new search item service.
 	 *
-	 * @param search
-	 *            the search
+	 * @param username
+	 *            the username
+	 * @param id
+	 *            the id
+	 * @param offer
+	 *            the offer
 	 */
 	public BidAnItemService(String username, String id, float offer) {
 		this.id = id;
@@ -35,18 +44,17 @@ public class BidAnItemService extends P2PBayService {
 	@Override
 	public boolean execute() {
 		final Item item = (Item) get("item", id);
-		
-		
+
 		if (item != null && !item.isClosed()) {
 			final String bidKey = UUID.randomUUID().toString();
 			final BidDto bid = new BidDto(offer, username, id);
-			set("bid", bidKey,bid);
-			
+			set("bid", bidKey, bid);
+
 			/* add to item userBids */
-			add(DOMAIN_USER_BIDS , username, bidKey);
+			add(DOMAIN_USER_BIDS, username, bidKey);
 
 			/* add to item bids */
-			add(DOMAIN_ITEM_BIDS,  id, bidKey);
+			add(DOMAIN_ITEM_BIDS, id, bidKey);
 			return true;
 		}
 		return false;

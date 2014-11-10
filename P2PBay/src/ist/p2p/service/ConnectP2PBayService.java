@@ -4,13 +4,32 @@ import java.io.IOException;
 
 import net.tomp2p.peers.Number160;
 
-public class ConnectP2PBayService extends P2PBayService{
+// TODO: Auto-generated Javadoc
+/**
+ * The Class ConnectP2PBayService.
+ */
+public class ConnectP2PBayService extends P2PBayService {
 
-	private String masterIp =null;
+	/** The master ip. */
+	private String masterIp = null;
+
+	/** The master port. */
 	private int masterPort;
+
+	/** The my port. */
 	private int myPort;
+
+	/** The my id. */
 	private Number160 myId;
-	
+
+	/**
+	 * Instantiates a new connect p2 p bay service.
+	 *
+	 * @param ip
+	 *            the ip
+	 * @param port
+	 *            the port
+	 */
 	public ConnectP2PBayService(String ip, int port) {
 		this.masterIp = ip;
 		this.masterPort = port;
@@ -18,6 +37,9 @@ public class ConnectP2PBayService extends P2PBayService{
 		this.myId = new Number160(RANDOM);
 	}
 
+	/**
+	 * Instantiates a new connect p2 p bay service.
+	 */
 	public ConnectP2PBayService() {
 		this.masterIp = "127.0.0.1";
 		this.masterPort = 1024;
@@ -26,10 +48,15 @@ public class ConnectP2PBayService extends P2PBayService{
 
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see ist.p2p.service.P2PBayService#execute()
+	 */
 	@Override
 	public boolean execute() {
 		try {
-			connect( masterIp,masterPort, myPort,myId);
+			connect(masterIp, masterPort, myPort, myId);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

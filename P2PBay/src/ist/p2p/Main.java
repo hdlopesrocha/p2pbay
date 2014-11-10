@@ -192,18 +192,20 @@ public class Main {
 
 			System.out.println("############## BIDS HISTORY ##############");
 			for (BidDto bid : userBidsService.getBids()) {
-				if(bid!=userBidsService.getBids().get(0)){
+				if (bid != userBidsService.getBids().get(0)) {
 					System.out.println("\t--------------------------------");
 				}
-				GetItemByIdService getService = new GetItemByIdService(	bid.getItem());
+				GetItemByIdService getService = new GetItemByIdService(
+						bid.getItem());
 				getService.execute();
 				System.out.println("\tid: " + bid.getItem());
-				System.out.println("\ttitle: " + getService.getItem().getTitle());
+				System.out.println("\ttitle: "
+						+ getService.getItem().getTitle());
 				System.out.println("\toffer: " + bid.getOffer());
-				
-				
+
 			}
-			System.out.println("############## PURCHASES HISTORY ##############");
+			System.out
+					.println("############## PURCHASES HISTORY ##############");
 			for (PurchaseDto item : userBidsService.getPurchases()) {
 				System.out.println("\tid: " + item.getId());
 				System.out.println("\ttitle: " + item.getTitle());

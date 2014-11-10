@@ -9,7 +9,6 @@ import java.util.Random;
 import net.tomp2p.connection.Bindings;
 import net.tomp2p.dht.FutureGet;
 import net.tomp2p.dht.FuturePut;
-import net.tomp2p.dht.GetBuilder;
 import net.tomp2p.dht.PeerBuilderDHT;
 import net.tomp2p.dht.PeerDHT;
 import net.tomp2p.futures.FutureBootstrap;
@@ -24,9 +23,6 @@ import net.tomp2p.storage.Data;
 // TODO: Auto-generated Javadoc
 /**
  * The Class P2PBayService.
- *
- * @param <T>
- *            the generic type
  */
 public abstract class P2PBayService {
 
@@ -40,13 +36,28 @@ public abstract class P2PBayService {
 	/** The peer. */
 	static protected PeerDHT peer = null;
 
+	/** The Constant DOMAIN_AUTH. */
 	public static final String DOMAIN_AUTH = "auth";
+
+	/** The Constant DOMAIN_ITEM. */
 	public static final String DOMAIN_ITEM = "item";
+
+	/** The Constant DOMAIN_BID. */
 	public static final String DOMAIN_BID = "bid";
+
+	/** The Constant DOMAIN_USER_BIDS. */
 	public static final String DOMAIN_USER_BIDS = "user_bids";
+
+	/** The Constant DOMAIN_ITEM_BIDS. */
 	public static final String DOMAIN_ITEM_BIDS = "item_bids";
+
+	/** The Constant DOMAIN_PURCHASES. */
 	public static final String DOMAIN_PURCHASES = "purchases";
+
+	/** The Constant DOMAIN_WORD. */
 	public static final String DOMAIN_WORD = "word";
+
+	/** The Constant RANDOM. */
 	public static final Random RANDOM = new Random();
 
 	/**
@@ -56,42 +67,61 @@ public abstract class P2PBayService {
 	 *            the ip
 	 * @param masterPort
 	 *            the port
+	 * @param myPeerPort
+	 *            the my peer port
+	 * @param myPeerId
+	 *            the my peer id
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	protected static void connect(final String masterIp, final int masterPort, final int myPeerPort, Number160 myPeerId)
-			throws IOException {
+	protected static void connect(final String masterIp, final int masterPort,
+			final int myPeerPort, Number160 myPeerId) throws IOException {
 
-		final Bindings bindings = new Bindings().addInterface("eth0").addInterface("wlan0").addInterface("lo");
+		final Bindings bindings = new Bindings().addInterface("eth0")
+				.addInterface("wlan0").addInterface("lo");
 
-		peer = new PeerBuilderDHT(new PeerBuilder(myPeerId).ports(myPeerPort).bindings(bindings).behindFirewall(true).start()).start();
+		peer = new PeerBuilderDHT(new PeerBuilder(myPeerId).ports(myPeerPort)
+				.bindings(bindings).behindFirewall(true).start()).start();
 		new IndirectReplication(peer).autoReplication(true).start();
 
-		final PeerAddress address = new PeerAddress(Number160.ONE, masterIp, masterPort, masterPort);
+		final PeerAddress address = new PeerAddress(Number160.ONE, masterIp,
+				masterPort, masterPort);
 		// Future Discover
-		final FutureDiscover futureDiscover = peer.peer().discover().peerAddress(address).start();
+		final FutureDiscover futureDiscover = peer.peer().discover()
+				.peerAddress(address).start();
 		futureDiscover.awaitUninterruptibly();
 
 		if (!futureDiscover.isSuccess()) {
-			System.out.println("Discover with direct connection failed. Reason = "	+ futureDiscover.failedReason());
+			System.out
+					.println("Discover with direct connection failed. Reason = "
+							+ futureDiscover.failedReason());
 			peer.shutdown().awaitUninterruptibly();
 		}
 
 		// Future Bootstrap - slave
-		final FutureBootstrap futureBootstrap = peer.peer().bootstrap().peerAddress(address).start();
+		final FutureBootstrap futureBootstrap = peer.peer().bootstrap()
+				.peerAddress(address).start();
 		futureBootstrap.awaitUninterruptibly();
 
 		if (!futureBootstrap.isSuccess()) {
-			System.out.println("Bootstrap with direct connection failed. Reason = "	+ futureBootstrap.failedReason());
+			System.out
+					.println("Bootstrap with direct connection failed. Reason = "
+							+ futureBootstrap.failedReason());
 			peer.shutdown().awaitUninterruptibly();
 		}
-	
 
-		
-		
 		System.out.println("*** PORT " + myPeerPort + " ***");
 	}
 
+	/**
+	 * Gets the all.
+	 *
+	 * @param domain
+	 *            the domain
+	 * @param key
+	 *            the key
+	 * @return the all
+	 */
 	protected static List<Object> getAll(final String domain, final String key) {
 		List<Object> ret = new ArrayList<Object>();
 
@@ -101,7 +131,7 @@ public abstract class P2PBayService {
 			final FutureGet future = peer.get(locationKey).domainKey(domainKey)
 					.all().start().awaitUninterruptibly();
 			Map<Number640, Data> data = future.dataMap();
-			if (future.isSuccess() &&  data!= null) {
+			if (future.isSuccess() && data != null) {
 				for (Data d : data.values()) {
 					ret.add(d.object());
 				}
@@ -118,6 +148,8 @@ public abstract class P2PBayService {
 	/**
 	 * Gets the.
 	 *
+	 * @param domain
+	 *            the domain
 	 * @param key
 	 *            the key
 	 * @return the object
@@ -145,6 +177,8 @@ public abstract class P2PBayService {
 	/**
 	 * Store.
 	 *
+	 * @param domain
+	 *            the domain
 	 * @param key
 	 *            the key
 	 * @param value
@@ -167,6 +201,16 @@ public abstract class P2PBayService {
 		}
 	}
 
+	/**
+	 * Adds the.
+	 *
+	 * @param domain
+	 *            the domain
+	 * @param key
+	 *            the key
+	 * @param value
+	 *            the value
+	 */
 	protected static void add(final String domain, final String key,
 			final Object value) {
 		try {

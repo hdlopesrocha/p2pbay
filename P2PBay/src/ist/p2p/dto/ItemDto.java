@@ -57,6 +57,8 @@ public class ItemDto implements Serializable {
 	/**
 	 * Instantiates a new item dto.
 	 *
+	 * @param id
+	 *            the id
 	 * @param owner
 	 *            the owner
 	 * @param title
@@ -99,7 +101,5 @@ public class ItemDto implements Serializable {
 	public String getDescription() {
 		return description;
 	}
-
-
 
 }

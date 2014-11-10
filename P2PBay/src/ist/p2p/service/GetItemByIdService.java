@@ -14,8 +14,10 @@ public class GetItemByIdService extends P2PBayService {
 
 	/** The search. */
 	private String id;
+
+	/** The item. */
 	private ItemDto item;
-	
+
 	/**
 	 * Instantiates a new search item service.
 	 *
@@ -35,26 +37,28 @@ public class GetItemByIdService extends P2PBayService {
 	public boolean execute() {
 		final Item concreteItem = (Item) get(DOMAIN_ITEM, id);
 		final List<Object> itemBids = getAll(DOMAIN_ITEM_BIDS, id);
-		if(concreteItem !=null){
-			item = new ItemDto(id,concreteItem.getOwner(), concreteItem.getTitle(),
-					concreteItem.getDescription());
-			
-			
-			
+		if (concreteItem != null) {
+			item = new ItemDto(id, concreteItem.getOwner(),
+					concreteItem.getTitle(), concreteItem.getDescription());
+
 			for (Object obj : itemBids) {
-				final BidDto bid = (BidDto) get(DOMAIN_BID , (String) obj);
+				final BidDto bid = (BidDto) get(DOMAIN_BID, (String) obj);
 				item.getBids().add(bid);
 			}
-	
+
 			return true;
-		}
-		else {
+		} else {
 			return false;
 		}
 	}
 
-	public ItemDto getItem(){
+	/**
+	 * Gets the item.
+	 *
+	 * @return the item
+	 */
+	public ItemDto getItem() {
 		return item;
 	}
-	
+
 }
