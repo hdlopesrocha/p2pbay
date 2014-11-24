@@ -15,7 +15,6 @@ public class ViewUserHistoryService extends P2PBayService {
 	/** The search. */
 	private String username;
 
-	
 	/** The bids. */
 	private List<BidDto> bids;
 
@@ -39,6 +38,7 @@ public class ViewUserHistoryService extends P2PBayService {
 	public List<PurchaseDto> getPurchases() {
 		return purchases;
 	}
+
 	/**
 	 * Instantiates a new search item service.
 	 *
@@ -55,23 +55,22 @@ public class ViewUserHistoryService extends P2PBayService {
 	 * 
 	 * @see ist.p2p.service.P2PBayService#execute()
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public boolean execute() {
-		List<String> bidIds = (List<String>) get(DOMAIN_USER_BIDS , username);
-		
+		List<Object> bidIds = getAll(DOMAIN_USER_BIDS, username);
+
 		bids = new ArrayList<BidDto>();
-		for(String bidId: bidIds){
-			BidDto bid =(BidDto) get(DOMAIN_BID, bidId);
-			if(bid!=null){
+		for (Object bidId : bidIds) {
+			BidDto bid = (BidDto) get(DOMAIN_BID, (String) bidId);
+			if (bid != null) {
 				bids.add(bid);
 			}
 		}
-		
-		purchases  = (List<PurchaseDto>) get(DOMAIN_PURCHASES , username);		
+		purchases = new ArrayList<PurchaseDto>();
+		for (Object obj : getAll(DOMAIN_PURCHASES, username)) {
+			purchases.add((PurchaseDto) obj);
+		}
 
-		
-		
 		return true;
 	}
 

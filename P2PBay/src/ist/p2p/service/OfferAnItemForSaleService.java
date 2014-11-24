@@ -2,10 +2,7 @@ package ist.p2p.service;
 
 import ist.p2p.domain.Item;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
-import java.util.TreeMap;
 import java.util.UUID;
 
 // TODO: Auto-generated Javadoc
@@ -30,7 +27,6 @@ public class OfferAnItemForSaleService extends P2PBayService {
 	 * 
 	 * @see ist.p2p.service.P2PBayService#execute()
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public boolean execute() {
 		if (title != null && description != null
@@ -38,9 +34,7 @@ public class OfferAnItemForSaleService extends P2PBayService {
 				&& !description.isEmpty()) {
 			Item item = new Item(username, title, description);
 			String itemId = UUID.randomUUID().toString();
-			put(DOMAIN_ITEM , itemId, item);
-			put(DOMAIN_ITEM_BIDS, itemId, new TreeMap<Float,String>());
-			
+			set(DOMAIN_ITEM , itemId, item);			
 			
 			final HashSet<String> uniqueTokens = new HashSet<String>();
 			for (String token : title.split(" ")) {
@@ -48,13 +42,7 @@ public class OfferAnItemForSaleService extends P2PBayService {
 			}
 
 			for (String token : uniqueTokens) {
-				List<String> existingIndexs = (List<String>) get(DOMAIN_WORD, token);
-
-				if (existingIndexs == null)
-					existingIndexs = new ArrayList<String>();
-
-				existingIndexs.add(itemId);
-				put(DOMAIN_WORD, token, existingIndexs);
+				add(DOMAIN_WORD, token, itemId);
 			}
 			return true;
 		}

@@ -6,7 +6,6 @@ package ist.p2p.logic;
  */
 public class LogicNot extends LogicNode {
 
-
 	/**
 	 * Instantiates a new logic not.
 	 *

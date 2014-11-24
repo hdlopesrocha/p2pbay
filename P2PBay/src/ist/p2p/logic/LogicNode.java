@@ -40,10 +40,20 @@ public abstract class LogicNode {
 	 */
 	public abstract boolean check(Iterable<String> strings);
 
+	/**
+	 * Rec.
+	 *
+	 * @param str
+	 *            the str
+	 * @param dep
+	 *            the dep
+	 * @return the logic node
+	 */
 	private static LogicNode rec(String str, int dep) {
-	
-		List<String> tokens = getTokens(str.charAt(0)=='(' ? str.substring(1,str.length()-1) : str);
-		
+
+		List<String> tokens = getTokens(str.charAt(0) == '(' ? str.substring(1,
+				str.length() - 1) : str);
+
 		if (str.startsWith("(and")) {
 			tokens.remove(0);
 			List<LogicNode> list = new ArrayList<LogicNode>();
@@ -65,41 +75,49 @@ public abstract class LogicNode {
 		}
 	}
 
-	
-	private static List<String> getTokens(String str){
-		
+	/**
+	 * Gets the tokens.
+	 *
+	 * @param str
+	 *            the str
+	 * @return the tokens
+	 */
+	private static List<String> getTokens(String str) {
+
 		List<String> tokens = new ArrayList<String>();
-		
-		String token ="";
+
+		String token = "";
 		int depth = 0;
-		
-		for(int i=0; i < str.length() ; ++i){
+
+		for (int i = 0; i < str.length(); ++i) {
 			char c = str.charAt(i);
-			
-			if(c == '('){
+
+			if (c == '(') {
 				++depth;
 				token += c;
-			}
-			else if(c == ')'){
+			} else if (c == ')') {
 				--depth;
 				token += c;
-			}
-			else if(c==' ' && depth==0){
+			} else if (c == ' ' && depth == 0) {
 				tokens.add(token);
-				token ="";
-			}
-			else {
+				token = "";
+			} else {
 				token += c;
 			}
 		}
-		
-		
-		
+
 		tokens.add(token);
 
 		return tokens;
 	}
-	
+
+	/**
+	 * Extract from string.
+	 *
+	 * @param str
+	 *            the str
+	 * @return the logic node
+	 */
 	public static LogicNode extractFromString(String str) {
 		return rec(str, 0);
 	}

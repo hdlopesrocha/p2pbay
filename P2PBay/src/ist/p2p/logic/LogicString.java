@@ -34,8 +34,13 @@ public class LogicString extends LogicNode {
 		return false;
 	}
 
-	 @Override
-	public String toString(){
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
 		return content;
 	}
 }
