@@ -73,7 +73,7 @@ public class Servent {
 			peers.add(sock);
 		}
 		new ObjectOutputStream(sock.getOutputStream())
-				.writeObject(new HelloMessage(id));
+				.writeObject(new Message( MessageType.HELLO,id));
 		new ClientSocketThread(this, sock).start();
 	}
 
@@ -89,23 +89,21 @@ public class Servent {
 	}
 
 	synchronized void handleMsg(Message msg, Socket s) throws IOException {
-		switch (msg.getMSGType()) {
+
+		switch (msg.getMessageType()) {
 		case HELLO:
-			HelloMessage hmsg = (HelloMessage) msg;
-			System.out.printf("Received hello from %d\n", hmsg.getSrcId());
+			System.out.printf("Received hello from %d\n", msg.getContent());
 			new ObjectOutputStream(s.getOutputStream())
-					.writeObject(new HelloMessageReply(id));
+					.writeObject(new Message( MessageType.HELLO_REPLY,id));
 			break;
 		case HELLO_REPLY:
-			HelloMessageReply hmsgr = (HelloMessageReply) msg;
 			System.out.printf("Received hello reply from %d\n",
-					hmsgr.getSrcId());
+					msg.getContent());
 			break;
 		case SEARCH:
 			System.out.println("###########  Entrou no SEARCH  ###########");
-			SearchMessage hmsearch = (SearchMessage) msg;
-			if (this.doc.searchWord(hmsearch.getWord())) {
-				System.out.printf("Peer %d have the word(%s) in your text\n", this.id, hmsearch.getWord());
+			if (this.doc.searchWord((String)msg.getContent())) {
+				System.out.printf("Peer %d have the word(%s) in your text\n", this.id, msg.getContent());
 //				new ObjectOutputStream(s.getOutputStream())
 //						.writeObject(new HelloMessageReply(id));
 			}				
@@ -116,7 +114,7 @@ public class Servent {
 	synchronized void searchWord(String word) throws IOException {
 		for (Socket soc : this.peers)
 			new ObjectOutputStream(soc.getOutputStream())
-			.writeObject(new SearchMessage(word));
+			.writeObject(new Message(MessageType.SEARCH, word));
 	}
 
 	/**
