@@ -15,7 +15,7 @@ public class Document {
 	 * 
 	 */
 	public Document(String text) {
-		this.text = text;
+		this.text = text.toLowerCase();
 	}
 	
 	public boolean searchWord(String word) {
