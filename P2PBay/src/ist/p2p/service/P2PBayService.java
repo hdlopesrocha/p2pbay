@@ -20,6 +20,8 @@ import net.tomp2p.peers.PeerAddress;
 import net.tomp2p.replication.IndirectReplication;
 import net.tomp2p.storage.Data;
 
+import ist.p2p.gossip.Gossip;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Class P2PBayService.
@@ -35,6 +37,9 @@ public abstract class P2PBayService {
 
 	/** The peer. */
 	static protected PeerDHT peer = null;
+
+	/**Gossip*/
+	static protected Gossip gossip = null;
 
 	/** The Constant DOMAIN_AUTH. */
 	public static final String DOMAIN_AUTH = "auth";
@@ -111,6 +116,8 @@ public abstract class P2PBayService {
 		}
 
 		System.out.println("*** PORT " + myPeerPort + " ***");
+
+		gossip = new Gossip(peer);
 	}
 
 	/**
@@ -236,6 +243,8 @@ public abstract class P2PBayService {
 	 * @param value
 	 *            the value
 	 */
+
+
 	/*
 	 * protected static void replace(String key, Object value) {
 	 * 
@@ -244,4 +253,13 @@ public abstract class P2PBayService {
 	 * .awaitUninterruptibly(); } catch (IOException e) { // TODO Auto-generated
 	 * catch block e.printStackTrace(); } }
 	 */
+
+
+
+	public static final Gossip getGossip(){
+		return gossip;
+	}
+	public static final PeerDHT getPeer(){
+		return peer;
+	}
 }
