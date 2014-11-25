@@ -56,11 +56,15 @@ public final class Gossip{
 					GossipMessage gmsg = (GossipMessage)object;
 					final Integer id = gmsg.getMessageId();
 
-					if (gossip.gossipId.equals(null) ||  !gossip.gossipId.equals(id)){//&& !gossip.oldGossipIds.contains(id)){
+					//reset for new gossip
+					if (!gossip.gossipId.equals(id) && !gossip.oldGossipIds.contains(id)){
 						gossip.oldGossipIds.add(gossip.gossipId);
 						gossip.gossipId = id;
 						gossip.restart();
-
+					}
+					//old gossip
+					if (!gossip.gossipId.equals(id)){
+						return null;
 					}
 
 					gossip.weight += gmsg.getWeight();
@@ -77,6 +81,7 @@ public final class Gossip{
 	}
 	public final void spreadGossip(){
 
+		this.oldGossipIds.add(this.gossipId);
 		this.gossipId = new Random().nextInt(Integer.MAX_VALUE);
 		restart(1);
 	}
@@ -111,13 +116,13 @@ public final class Gossip{
 			auctions = auctions/2;
 			users = users/2;
 
-			System.out.println("got  "+new Statistics(tomp2p.peer().peerBean().peerMap()).estimatedNumberOfNodes());
+			//System.out.println("got  "+new Statistics(tomp2p.peer().peerBean().peerMap()).estimatedNumberOfNodes());
 			GossipMessage msg = new GossipMessage(gossipId, weight, value, auctions, users);
 		//	PeerAddress targetPeer = myPeers.get(new Random().nextInt(myPeers.size()));
 		//	tomp2p.peer().sendDirect(targetPeer).object(msg).start();
-		//tomp2p.send(new Number160(new Random())).object(msg)
-	//		.requestP2PConfiguration(new RequestP2PConfiguration(1, 5, 0))
-	//		.start();	
+		tomp2p.send(new Number160(new Random())).object(msg)
+			.requestP2PConfiguration(new RequestP2PConfiguration(1, 5, 0))
+			.start();	
 
 		}
 
