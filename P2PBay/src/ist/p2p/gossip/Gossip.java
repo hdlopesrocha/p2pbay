@@ -56,15 +56,16 @@ public final class Gossip{
 					GossipMessage gmsg = (GossipMessage)object;
 					final Integer id = gmsg.getMessageId();
 
+					//old gossip
+					if (!gossip.gossipId.equals(id) && gossip.oldGossipIds.contains(id)){
+						return null;
+					}
+
 					//reset for new gossip
 					if (!gossip.gossipId.equals(id) && !gossip.oldGossipIds.contains(id)){
 						gossip.oldGossipIds.add(gossip.gossipId);
 						gossip.gossipId = id;
 						gossip.restart();
-					}
-					//old gossip
-					if (!gossip.gossipId.equals(id)){
-						return null;
 					}
 
 					gossip.weight += gmsg.getWeight();
