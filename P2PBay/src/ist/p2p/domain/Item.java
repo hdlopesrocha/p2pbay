@@ -6,7 +6,7 @@ import java.io.Serializable;
 /**
  * The Class ItemDto.
  */
-public class Item implements Serializable {
+public class Item implements Serializable, Domain {
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -7647175142472873433L;
@@ -87,6 +87,9 @@ public class Item implements Serializable {
 		return description;
 	}
 
-
+	@Override
+	public DomainType getDomainType(){
+		return DomainType.ITEM;
+	}
 
 }

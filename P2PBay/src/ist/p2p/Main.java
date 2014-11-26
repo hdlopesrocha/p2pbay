@@ -60,7 +60,7 @@ public class Main {
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException , Exception{
 		ResourceLeakDetector.setLevel(Level.DISABLED);
 		ConnectP2PBayService service;
 		final String ip = Utils.getArgValue("-i", args);
@@ -75,6 +75,7 @@ public class Main {
 
 		final String usersFileName = Utils.getArgValue("-u", args);
 		if (usersFileName != null) {
+			Thread.sleep(5000);
 			loadUsersFile(usersFileName);
 		}
 		final Scanner scanner = new Scanner(System.in);

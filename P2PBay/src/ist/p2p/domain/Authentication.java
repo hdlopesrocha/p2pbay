@@ -6,7 +6,7 @@ import java.io.Serializable;
 /**
  * The Class AuthenticationDto.
  */
-public class Authentication implements Serializable {
+public class Authentication implements Serializable, Domain {
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 6254705903420169696L;
@@ -54,6 +54,10 @@ public class Authentication implements Serializable {
 	 */
 	public String getHash() {
 		return hash;
+	}
+	@Override
+	public DomainType getDomainType(){
+		return DomainType.AUTH;
 	}
 
 }
