@@ -1,0 +1,25 @@
+1|7001| a b c q
+2|7002| a b d f |localhost:7001
+3|7003| x f i o |localhost:7001|localhost:7002
+4|7004| l r o b |localhost:7001|localhost:7002|localhost:7003
+5|7005| w q p b |localhost:7001|localhost:7002|localhost:7003|localhost:7004
+6|7006| v h r y |localhost:7001|localhost:7002|localhost:7003|localhost:7004|localhost:7005
+7|7007| x |localhost:7001|localhost:7002|localhost:7003|localhost:7004|localhost:7005|localhost:7006
+8|7008| x |localhost:7001|localhost:7002|localhost:7003|localhost:7004|localhost:7005|localhost:7006|localhost:7007
+9|7009| x |localhost:7001|localhost:7002|localhost:7003|localhost:7004|localhost:7005|localhost:7006|localhost:7007|localhost:7008
+10|7010| x |localhost:7001|localhost:7002|localhost:7003|localhost:7004|localhost:7005|localhost:7006|localhost:7007|localhost:7008|localhost:7009
+11|7011| x |localhost:7001|localhost:7002|localhost:7003|localhost:7004|localhost:7005|localhost:7006|localhost:7007|localhost:7008|localhost:7009|localhost:7010
+12|7012| x |localhost:7001|localhost:7002|localhost:7003|localhost:7004|localhost:7005|localhost:7006|localhost:7007|localhost:7008|localhost:7009|localhost:7010|localhost:7011
+13|7013| x |localhost:7001|localhost:7002|localhost:7003|localhost:7004|localhost:7005|localhost:7006|localhost:7007|localhost:7008|localhost:7009|localhost:7010|localhost:7011|localhost:7012
+14|7014| x |localhost:7001|localhost:7002|localhost:7003|localhost:7004|localhost:7005|localhost:7006|localhost:7007|localhost:7008|localhost:7009|localhost:7010|localhost:7011|localhost:7012|localhost:7013
+15|7015| x |localhost:7001|localhost:7002|localhost:7003|localhost:7004|localhost:7005|localhost:7006|localhost:7007|localhost:7008|localhost:7009|localhost:7010|localhost:7011|localhost:7012|localhost:7013|localhost:7014
+16|7016| x |localhost:7001|localhost:7002|localhost:7003|localhost:7004|localhost:7005|localhost:7006|localhost:7007|localhost:7008|localhost:7009|localhost:7010|localhost:7011|localhost:7012|localhost:7013|localhost:7014|localhost:7015
+17|7017| x |localhost:7001|localhost:7002|localhost:7003|localhost:7004|localhost:7005|localhost:7006|localhost:7007|localhost:7008|localhost:7009|localhost:7010|localhost:7011|localhost:7012|localhost:7013|localhost:7014|localhost:7015|localhost:7016
+18|7018| x |localhost:7001|localhost:7002|localhost:7003|localhost:7004|localhost:7005|localhost:7006|localhost:7007|localhost:7008|localhost:7009|localhost:7010|localhost:7011|localhost:7012|localhost:7013|localhost:7014|localhost:7015|localhost:7016|localhost:7017
+19|7019| x |localhost:7001|localhost:7002|localhost:7003|localhost:7004|localhost:7005|localhost:7006|localhost:7007|localhost:7008|localhost:7009|localhost:7010|localhost:7011|localhost:7012|localhost:7013|localhost:7014|localhost:7015|localhost:7016|localhost:7017|localhost:7018
+20|7020| x |localhost:7001|localhost:7002|localhost:7003|localhost:7004|localhost:7005|localhost:7006|localhost:7007|localhost:7008|localhost:7009|localhost:7010|localhost:7011|localhost:7012|localhost:7013|localhost:7014|localhost:7015|localhost:7016|localhost:7017|localhost:7018|localhost:7019
+21|7021| x |localhost:7001|localhost:7002|localhost:7003|localhost:7004|localhost:7005|localhost:7006|localhost:7007|localhost:7008|localhost:7009|localhost:7010|localhost:7011|localhost:7012|localhost:7013|localhost:7014|localhost:7015|localhost:7016|localhost:7017|localhost:7018|localhost:7019|localhost:7020
+22|7022| x |localhost:7001|localhost:7002|localhost:7003|localhost:7004|localhost:7005|localhost:7006|localhost:7007|localhost:7008|localhost:7009|localhost:7010|localhost:7011|localhost:7012|localhost:7013|localhost:7014|localhost:7015|localhost:7016|localhost:7017|localhost:7018|localhost:7019|localhost:7020|localhost:7021
+23|7023| x |localhost:7001|localhost:7002|localhost:7003|localhost:7004|localhost:7005|localhost:7006|localhost:7007|localhost:7008|localhost:7009|localhost:7010|localhost:7011|localhost:7012|localhost:7013|localhost:7014|localhost:7015|localhost:7016|localhost:7017|localhost:7018|localhost:7019|localhost:7020|localhost:7021|localhost:7022
+24|7024| x |localhost:7001|localhost:7002|localhost:7003|localhost:7004|localhost:7005|localhost:7006|localhost:7007|localhost:7008|localhost:7009|localhost:7010|localhost:7011|localhost:7012|localhost:7013|localhost:7014|localhost:7015|localhost:7016|localhost:7017|localhost:7018|localhost:7019|localhost:7020|localhost:7021|localhost:7022|localhost:7023
+25|7025| x |localhost:7001|localhost:7002|localhost:7003|localhost:7004|localhost:7005|localhost:7006|localhost:7007|localhost:7008|localhost:7009|localhost:7010|localhost:7011|localhost:7012|localhost:7013|localhost:7014|localhost:7015|localhost:7016|localhost:7017|localhost:7018|localhost:7019|localhost:7020|localhost:7021|localhost:7022|localhost:7023|localhost:7024

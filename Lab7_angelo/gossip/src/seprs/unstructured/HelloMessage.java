@@ -4,19 +4,17 @@ import java.io.Serializable;
 
 @SuppressWarnings("serial")
 public class HelloMessage implements Serializable, Message {
-	int srcId;
-	
-	public HelloMessage( int src) {
-		srcId = src;
-	}
-	
-	public int getSrcId() {
-		return srcId;
+	public String query;
+	public int messageId;
+
+	public HelloMessage(String query, int mid) {
+		this.query = query;
+		this.messageId = mid;
 	}
 
 	@Override
 	public MessageType getMSGType() {
-		return MessageType.HELLO;
+		return MessageType.QUERY;
 	}
 
 }
