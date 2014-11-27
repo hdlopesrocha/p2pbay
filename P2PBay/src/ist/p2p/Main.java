@@ -10,6 +10,7 @@ import ist.p2p.service.AuthenticateUserService;
 import ist.p2p.service.BidAnItemService;
 import ist.p2p.service.ConnectP2PBayService;
 import ist.p2p.service.GetItemByIdService;
+import ist.p2p.service.LaunchGossipService;
 import ist.p2p.service.OfferAnItemForSaleService;
 import ist.p2p.service.RegisterUserService;
 import ist.p2p.service.SearchAnItemService;
@@ -77,12 +78,13 @@ public class Main {
 		if (usersFileName != null) {
 			loadUsersFile(usersFileName);
 		}
+		new LaunchGossipService().execute();
 		final Scanner scanner = new Scanner(System.in);
+
 		while (true) {
 			commandLine(scanner);
 		}
 		// scanner.close();
-
 	}
 
 	/**

@@ -36,26 +36,29 @@ public abstract class P2PBayService {
 	/** The peer. */
 	static protected PeerDHT peer = null;
 
+	
+	public static final Number160 DOMAIN_GOSSIP = Number160.createHash("gossip");
+
 	/** The Constant DOMAIN_AUTH. */
-	public static final String DOMAIN_AUTH = "auth";
+	public static final Number160 DOMAIN_AUTH = Number160.createHash("auth");
 
 	/** The Constant DOMAIN_ITEM. */
-	public static final String DOMAIN_ITEM = "item";
+	public static final Number160 DOMAIN_ITEM = Number160.createHash("item");
 
 	/** The Constant DOMAIN_BID. */
-	public static final String DOMAIN_BID = "bid";
+	public static final Number160 DOMAIN_BID = Number160.createHash("bid");
 
 	/** The Constant DOMAIN_USER_BIDS. */
-	public static final String DOMAIN_USER_BIDS = "user_bids";
+	public static final Number160 DOMAIN_USER_BIDS = Number160.createHash("user_bids");
 
 	/** The Constant DOMAIN_ITEM_BIDS. */
-	public static final String DOMAIN_ITEM_BIDS = "item_bids";
+	public static final Number160 DOMAIN_ITEM_BIDS = Number160.createHash("item_bids");
 
 	/** The Constant DOMAIN_PURCHASES. */
-	public static final String DOMAIN_PURCHASES = "purchases";
+	public static final Number160 DOMAIN_PURCHASES = Number160.createHash("purchases");
 
 	/** The Constant DOMAIN_WORD. */
-	public static final String DOMAIN_WORD = "word";
+	public static final Number160 DOMAIN_WORD = Number160.createHash("word");
 
 	/** The Constant RANDOM. */
 	public static final Random RANDOM = new Random();
@@ -77,8 +80,8 @@ public abstract class P2PBayService {
 	protected static void connect(final String masterIp, final int masterPort,
 			final int myPeerPort, Number160 myPeerId) throws IOException {
 
-		final Bindings bindings = new Bindings().addInterface("eth0")
-				.addInterface("wlan0").addInterface("lo");
+		final Bindings bindings = new Bindings()/*.addInterface("eth0")
+				.addInterface("wlan0")*/.addInterface("lo");
 
 		peer = new PeerBuilderDHT(new PeerBuilder(myPeerId).ports(myPeerPort)
 				.bindings(bindings).behindFirewall(true).start()).start();
@@ -98,6 +101,8 @@ public abstract class P2PBayService {
 			peer.shutdown().awaitUninterruptibly();
 		}
 
+		
+		
 		// Future Bootstrap - slave
 		final FutureBootstrap futureBootstrap = peer.peer().bootstrap()
 				.peerAddress(address).start();
@@ -122,13 +127,12 @@ public abstract class P2PBayService {
 	 *            the key
 	 * @return the all
 	 */
-	protected static List<Object> getAll(final String domain, final String key) {
+	protected static List<Object> getAll(final Number160 domain, final String key) {
 		List<Object> ret = new ArrayList<Object>();
 
 		try {
 			final Number160 locationKey = Number160.createHash(key);
-			final Number160 domainKey = Number160.createHash(domain);
-			final FutureGet future = peer.get(locationKey).domainKey(domainKey)
+			final FutureGet future = peer.get(locationKey).domainKey(domain)
 					.all().start().awaitUninterruptibly();
 			Map<Number640, Data> data = future.dataMap();
 			if (future.isSuccess() && data != null) {
@@ -154,11 +158,10 @@ public abstract class P2PBayService {
 	 *            the key
 	 * @return the object
 	 */
-	protected static Object get(final String domain, final String key) {
+	protected static Object get(final Number160 domain, final String key) {
 		try {
 			final Number160 locationKey = Number160.createHash(key);
-			final Number160 domainKey = Number160.createHash(domain);
-			final FutureGet future = peer.get(locationKey).domainKey(domainKey)
+			final FutureGet future = peer.get(locationKey).domainKey(domain)
 					.start().awaitUninterruptibly();
 			if (future.isSuccess()) {
 				if (future.data() != null) {
@@ -184,12 +187,11 @@ public abstract class P2PBayService {
 	 * @param value
 	 *            the value
 	 */
-	protected static void set(final String domain, final String key,
+	protected static void set(final Number160 domain, final String key,
 			final Object value) {
 		try {
 			final Number160 locationKey = Number160.createHash(key);
-			final Number160 domainKey = Number160.createHash(domain);
-			final FuturePut future = peer.put(locationKey).domainKey(domainKey)
+			final FuturePut future = peer.put(locationKey).domainKey(domain)
 					.data(new Data(value)).start().awaitUninterruptibly();
 
 			if (!future.isSuccess()) {
@@ -211,12 +213,11 @@ public abstract class P2PBayService {
 	 * @param value
 	 *            the value
 	 */
-	protected static void add(final String domain, final String key,
+	protected static void add(final Number160 domain, final String key,
 			final Object value) {
 		try {
 			final Number160 locationKey = Number160.createHash(key);
-			final Number160 domainKey = Number160.createHash(domain);
-			final FuturePut future = peer.add(locationKey).domainKey(domainKey)
+			final FuturePut future = peer.add(locationKey).domainKey(domain)
 					.list(true).data(new Data(value)).start()
 					.awaitUninterruptibly();
 			if (!future.isSuccess()) {
