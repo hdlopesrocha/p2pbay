@@ -1,22 +1,22 @@
 package ist.p2p.service;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import net.tomp2p.connection.Bindings;
 import net.tomp2p.dht.FutureGet;
 import net.tomp2p.dht.FuturePut;
 import net.tomp2p.dht.PeerBuilderDHT;
 import net.tomp2p.dht.PeerDHT;
 import net.tomp2p.futures.FutureBootstrap;
 import net.tomp2p.futures.FutureDiscover;
+import net.tomp2p.p2p.Peer;
 import net.tomp2p.p2p.PeerBuilder;
 import net.tomp2p.peers.Number160;
 import net.tomp2p.peers.Number640;
-import net.tomp2p.peers.PeerAddress;
 import net.tomp2p.replication.IndirectReplication;
 import net.tomp2p.storage.Data;
 
@@ -36,8 +36,8 @@ public abstract class P2PBayService {
 	/** The peer. */
 	static protected PeerDHT peer = null;
 
-	
-	public static final Number160 DOMAIN_GOSSIP = Number160.createHash("gossip");
+	public static final Number160 DOMAIN_GOSSIP = Number160
+			.createHash("gossip");
 
 	/** The Constant DOMAIN_AUTH. */
 	public static final Number160 DOMAIN_AUTH = Number160.createHash("auth");
@@ -49,13 +49,16 @@ public abstract class P2PBayService {
 	public static final Number160 DOMAIN_BID = Number160.createHash("bid");
 
 	/** The Constant DOMAIN_USER_BIDS. */
-	public static final Number160 DOMAIN_USER_BIDS = Number160.createHash("user_bids");
+	public static final Number160 DOMAIN_USER_BIDS = Number160
+			.createHash("user_bids");
 
 	/** The Constant DOMAIN_ITEM_BIDS. */
-	public static final Number160 DOMAIN_ITEM_BIDS = Number160.createHash("item_bids");
+	public static final Number160 DOMAIN_ITEM_BIDS = Number160
+			.createHash("item_bids");
 
 	/** The Constant DOMAIN_PURCHASES. */
-	public static final Number160 DOMAIN_PURCHASES = Number160.createHash("purchases");
+	public static final Number160 DOMAIN_PURCHASES = Number160
+			.createHash("purchases");
 
 	/** The Constant DOMAIN_WORD. */
 	public static final Number160 DOMAIN_WORD = Number160.createHash("word");
@@ -80,39 +83,37 @@ public abstract class P2PBayService {
 	protected static void connect(final String masterIp, final int masterPort,
 			final int myPeerPort, Number160 myPeerId) throws IOException {
 
-		final Bindings bindings = new Bindings()/*.addInterface("eth0")
-				.addInterface("wlan0")*/.addInterface("lo");
-
 		peer = new PeerBuilderDHT(new PeerBuilder(myPeerId).ports(myPeerPort)
-				.bindings(bindings).behindFirewall(true).start()).start();
+				.behindFirewall(true).start()).start();
 		new IndirectReplication(peer).autoReplication(true).start();
 
-		final PeerAddress address = new PeerAddress(Number160.ONE, masterIp,
-				masterPort, masterPort);
+		final InetAddress address = InetAddress.getByName(masterIp);
 		// Future Discover
-		final FutureDiscover futureDiscover = peer.peer().discover()
-				.peerAddress(address).start();
-		futureDiscover.awaitUninterruptibly();
+		{
+			final FutureDiscover futureDiscover = peer.peer().discover()
+					.inetAddress(address).ports(masterPort).start();
+			futureDiscover.awaitUninterruptibly();
 
-		if (!futureDiscover.isSuccess()) {
-			System.out
-					.println("Discover with direct connection failed. Reason = "
-							+ futureDiscover.failedReason());
-			peer.shutdown().awaitUninterruptibly();
+			if (!futureDiscover.isSuccess()) {
+				System.out
+						.println("Discover with direct connection failed. Reason = "
+								+ futureDiscover.failedReason());
+				peer.shutdown().awaitUninterruptibly();
+			}
 		}
 
-		
-		
 		// Future Bootstrap - slave
-		final FutureBootstrap futureBootstrap = peer.peer().bootstrap()
-				.peerAddress(address).start();
-		futureBootstrap.awaitUninterruptibly();
+		{
+			final FutureBootstrap futureBootstrap = peer.peer().bootstrap()
+					.inetAddress(address).ports(masterPort).start();
+			futureBootstrap.awaitUninterruptibly();
 
-		if (!futureBootstrap.isSuccess()) {
-			System.out
-					.println("Bootstrap with direct connection failed. Reason = "
-							+ futureBootstrap.failedReason());
-			peer.shutdown().awaitUninterruptibly();
+			if (!futureBootstrap.isSuccess()) {
+				System.out
+						.println("Bootstrap with direct connection failed. Reason = "
+								+ futureBootstrap.failedReason());
+				peer.shutdown().awaitUninterruptibly();
+			}
 		}
 
 		System.out.println("*** PORT " + myPeerPort + " ***");
@@ -127,7 +128,8 @@ public abstract class P2PBayService {
 	 *            the key
 	 * @return the all
 	 */
-	protected static List<Object> getAll(final Number160 domain, final String key) {
+	protected static List<Object> getAll(final Number160 domain,
+			final String key) {
 		List<Object> ret = new ArrayList<Object>();
 
 		try {
