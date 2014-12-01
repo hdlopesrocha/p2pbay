@@ -13,7 +13,6 @@ import java.io.Serializable;
  */
 public class GossipDto implements Serializable {
 
-	double score = 1d;
 	boolean reset = false;
 	double weight = 0d;
 
@@ -25,17 +24,6 @@ public class GossipDto implements Serializable {
 		return reset;
 	}
 	
-	public double getNodeCount(){
-		return 1/weight;
-	}
-
-	public double getScore() {
-		return score;
-	}
-
-	public void setScore(double score) {
-		this.score = score;
-	}
 
 	public double getWeight() {
 		return weight;
@@ -50,7 +38,11 @@ public class GossipDto implements Serializable {
 	 */
 	private static final long serialVersionUID = -6867433225365269043L;
 
-	public GossipDto() {
+	public GossipDto(double w) {
+		weight = w;
+	}
+	public GossipDto(GossipDto g) {
+		weight = g.getWeight();
 	}
 	
 	

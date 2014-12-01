@@ -61,6 +61,7 @@ public class ConnectP2PBayService extends P2PBayService {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
 		return true;
 	}
 

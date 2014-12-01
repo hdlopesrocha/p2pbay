@@ -78,9 +78,7 @@ public class Main {
 		if (usersFileName != null) {
 			loadUsersFile(usersFileName);
 		}
-		new LaunchGossipService().execute();
 		final Scanner scanner = new Scanner(System.in);
-
 		while (true) {
 			commandLine(scanner);
 		}
