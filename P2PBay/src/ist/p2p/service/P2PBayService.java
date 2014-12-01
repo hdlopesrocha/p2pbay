@@ -11,10 +11,13 @@ import net.tomp2p.dht.FutureGet;
 import net.tomp2p.dht.FuturePut;
 import net.tomp2p.dht.PeerBuilderDHT;
 import net.tomp2p.dht.PeerDHT;
+import net.tomp2p.futures.BaseFuture;
 import net.tomp2p.futures.FutureBootstrap;
 import net.tomp2p.futures.FutureDiscover;
 import net.tomp2p.p2p.Peer;
 import net.tomp2p.p2p.PeerBuilder;
+import net.tomp2p.p2p.builder.BootstrapBuilder;
+import net.tomp2p.p2p.builder.DiscoverBuilder;
 import net.tomp2p.peers.Number160;
 import net.tomp2p.peers.Number640;
 import net.tomp2p.replication.IndirectReplication;
@@ -83,46 +86,43 @@ public abstract class P2PBayService {
 	protected static void connect(final String masterIp, final int masterPort,
 			final int myPeerPort, Number160 myPeerId) throws IOException {
 
-		Peer tempPeer =new PeerBuilder(myPeerId).ports(myPeerPort)
+		final Peer tempPeer = new PeerBuilder(myPeerId).ports(myPeerPort)
 				.behindFirewall(true).start();
-		
-		
-		
-		peer = new PeerBuilderDHT(tempPeer).start();
-		new IndirectReplication(peer).autoReplication(true).start();
 
-		
-
-		
 		final InetAddress address = InetAddress.getByName(masterIp);
-		// Future Discover
-		{
-			final FutureDiscover futureDiscover = peer.peer().discover()
-					.inetAddress(address).ports(masterPort).start();
-			futureDiscover.awaitUninterruptibly();
-
-			if (!futureDiscover.isSuccess()) {
-				System.out
-						.println("Discover with direct connection failed. Reason = "
-								+ futureDiscover.failedReason());
-				peer.shutdown().awaitUninterruptibly();
-			}
-		}
+		final DiscoverBuilder discover = tempPeer.discover()
+				.inetAddress(address).ports(masterPort);
+		final BootstrapBuilder bootstrap = tempPeer.bootstrap()
+				.inetAddress(address).ports(masterPort);
 
 		// Future Bootstrap - slave
 		{
-			final FutureBootstrap futureBootstrap = peer.peer().bootstrap()
-					.inetAddress(address).ports(masterPort).start();
-			futureBootstrap.awaitUninterruptibly();
+			final BaseFuture futureBootstrap = bootstrap.start()
+					.awaitUninterruptibly();
 
-			if (!futureBootstrap.isSuccess()) {
+			if (futureBootstrap.isFailed()) {
 				System.out
 						.println("Bootstrap with direct connection failed. Reason = "
 								+ futureBootstrap.failedReason());
-				peer.shutdown().awaitUninterruptibly();
+				tempPeer.shutdown();
 			}
 		}
 
+		// Future Discover
+		{
+			final FutureDiscover futureDiscover = discover.start()
+					.awaitUninterruptibly();
+
+			if (futureDiscover.isFailed()) {
+				System.out
+						.println("Discover with direct connection failed. Reason = "
+								+ futureDiscover.failedReason());
+				tempPeer.shutdown();
+			}
+		}
+
+		peer = new PeerBuilderDHT(tempPeer).start();
+		new IndirectReplication(peer).autoReplication(true).start();
 		new LaunchGossipService().execute();
 
 		System.out.println("*** PORT " + myPeerPort + " ***");
