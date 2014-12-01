@@ -7,7 +7,6 @@
 	<classpathentry kind="lib" path="lib/jdbm-3.0-alpha.jar"/>
 	<classpathentry kind="lib" path="lib/json-simple-1.1.1.jar"/>
 	<classpathentry kind="lib" path="lib/junit-4.10.jar"/>
-	<classpathentry kind="lib" path="lib/logback-classic-1.0.1.jar"/>
 	<classpathentry kind="lib" path="lib/logback-core-1.0.1.jar"/>
 	<classpathentry kind="lib" path="lib/netty-3.5.3.Patched.jar"/>
 	<classpathentry kind="lib" path="lib/slf4j-api-1.6.4.jar"/>

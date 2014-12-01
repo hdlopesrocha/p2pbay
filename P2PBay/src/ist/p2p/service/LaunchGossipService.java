@@ -2,7 +2,6 @@ package ist.p2p.service;
 
 import ist.p2p.dto.GossipDto;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
