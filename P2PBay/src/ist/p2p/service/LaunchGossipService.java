@@ -3,10 +3,11 @@ package ist.p2p.service;
 import ist.p2p.dto.GossipDto;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
-import net.tomp2p.dht.FutureSend;
-import net.tomp2p.futures.FutureDirect;
+import net.tomp2p.futures.FutureDHT;
+import net.tomp2p.futures.FutureResponse;
 import net.tomp2p.p2p.RequestP2PConfiguration;
 import net.tomp2p.peers.Number160;
 import net.tomp2p.peers.PeerAddress;
@@ -27,7 +28,7 @@ public class LaunchGossipService extends P2PBayService {
 	public boolean execute() {
 		temp = new GossipDto(0);
 		System.out.println("LAUNCH GOSSIP");
-		peer.peer().objectDataReply(new ObjectDataReply() {
+		peer.setObjectDataReply(new ObjectDataReply() {
 			@Override
 			public Object reply(PeerAddress arg0, Object arg1) throws Exception {
 				if (arg1 instanceof Number160) {
@@ -69,13 +70,13 @@ public class LaunchGossipService extends P2PBayService {
 			@Override
 			public void run() {
 				while (true) {
-					// System.out.println("CHOOSE LEADER");
-					FutureSend future = peer.send(Number160.ZERO)
-							.object(Number160.ZERO)
-							.requestP2PConfiguration(CONFIG).start();
+					System.out.println("CHOOSE LEADER");
+					FutureDHT future = peer.send(Number160.ZERO)
+							.setObject(Number160.ZERO)
+							.setRequestP2PConfiguration(CONFIG).start();
 					future.awaitUninterruptibly();
-					if (!future.isSuccess()) {
-						System.out.println(future.failedReason());
+					if (future.isFailed()) {
+						System.out.println(future.getFailedReason());
 					}
 					try {
 						Thread.sleep(5000);
@@ -99,44 +100,43 @@ public class LaunchGossipService extends P2PBayService {
 					try {
 						Thread.sleep(100);
 
-						List<PeerAddress> neighbors = peer.peer().peerBean()
-								.peerMap().all();
-
+						List<PeerAddress> neighbors = new ArrayList<PeerAddress>();
+						neighbors.addAll(peer.getPeerBean().getPeerMap().getAll());
+				
+						if (neighbors.size() > 0) {
+							for (PeerAddress pa : neighbors) {
+								System.out.print(pa.portTCP() + "|");
+							}
+							System.out.println();
+						}
 						PeerAddress address = neighbors.size() > 0 ? neighbors
 								.get(RANDOM.nextInt(neighbors.size())) : null;
+
 						if (address != null) {
 
 							GossipDto copy;
 							synchronized (LaunchGossipService.this) {
 								copy = new GossipDto(temp);
 							}
-							System.out.println("W=" + 1f / copy.getWeight()
-									+ " sending to:" + address.peerSocketAddress().tcpPort());
+							System.out.println("W=" + 1f / copy.getWeight());
 
-							FutureDirect future = peer.peer()
-									.sendDirect(address).object(copy).start();
+							FutureResponse future = peer.sendDirect(address).setObject(copy).start();
 							future.awaitUninterruptibly();
-							if (future.isSuccess()) {
+
 							
-								if(future.object()!=null){
-								
-									GossipDto myW = (GossipDto) future.object();
-									synchronized (LaunchGossipService.this) {
-										temp.setWeight(myW.getWeight());
-									}
-									break;
+							
+							if (!future.isFailed()) {
+								GossipDto myW = (GossipDto) future.getObject();
+								synchronized (LaunchGossipService.this) {
+									temp.setWeight(myW.getWeight());
 								}
+								break;
+
 							} else {
-								System.out.println(future.failedReason());
+								System.out.println(future.getFailedReason());
 							}
 						}
 					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (ClassNotFoundException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
