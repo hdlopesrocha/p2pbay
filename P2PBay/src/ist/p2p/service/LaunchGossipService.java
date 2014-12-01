@@ -111,7 +111,7 @@ public class LaunchGossipService extends P2PBayService {
 								copy = new GossipDto(temp);
 							}
 							System.out.println("W=" + 1f / copy.getWeight()
-									+ " sending to:" + address.peerId());
+									+ " sending to:" + address.peerSocketAddress().tcpPort());
 
 							FutureDirect future = peer.peer()
 									.sendDirect(address).object(copy).start();
