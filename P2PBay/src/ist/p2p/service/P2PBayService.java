@@ -7,20 +7,27 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+<<<<<<< HEAD
 import net.tomp2p.dht.FutureGet;
 import net.tomp2p.dht.FuturePut;
 import net.tomp2p.dht.PeerBuilderDHT;
 import net.tomp2p.dht.PeerDHT;
 import net.tomp2p.futures.BaseFuture;
+=======
+>>>>>>> backtoold
 import net.tomp2p.futures.FutureBootstrap;
+import net.tomp2p.futures.FutureDHT;
 import net.tomp2p.futures.FutureDiscover;
+import net.tomp2p.p2p.ConnectionConfiguration;
 import net.tomp2p.p2p.Peer;
+<<<<<<< HEAD
 import net.tomp2p.p2p.PeerBuilder;
 import net.tomp2p.p2p.builder.BootstrapBuilder;
 import net.tomp2p.p2p.builder.DiscoverBuilder;
+=======
+import net.tomp2p.p2p.PeerMaker;
+>>>>>>> backtoold
 import net.tomp2p.peers.Number160;
-import net.tomp2p.peers.Number640;
-import net.tomp2p.replication.IndirectReplication;
 import net.tomp2p.storage.Data;
 
 // TODO: Auto-generated Javadoc
@@ -37,7 +44,7 @@ public abstract class P2PBayService {
 	public abstract boolean execute();
 
 	/** The peer. */
-	static protected PeerDHT peer = null;
+	static protected Peer peer = null;
 
 	public static final Number160 DOMAIN_GOSSIP = Number160
 			.createHash("gossip");
@@ -86,6 +93,7 @@ public abstract class P2PBayService {
 	protected static void connect(final String masterIp, final int masterPort,
 			final int myPeerPort, Number160 myPeerId) throws IOException {
 
+<<<<<<< HEAD
 		final Peer tempPeer = new PeerBuilder(myPeerId).ports(myPeerPort)
 				.behindFirewall(true).start();
 
@@ -99,9 +107,38 @@ public abstract class P2PBayService {
 		{
 			final BaseFuture futureBootstrap = bootstrap.start()
 					.awaitUninterruptibly();
+=======
+		ConnectionConfiguration configuration = new ConnectionConfiguration();
+		configuration.setBehindFirewall(true);
+		peer = new PeerMaker(myPeerId).setPorts(myPeerPort)
+				.setConfiguration(configuration).makeAndListen();
+
+		final InetAddress address = InetAddress.getByName(masterIp);
+		if (myPeerPort != 1024) {
+			// Future Bootstrap - slave
+			{
+				final FutureBootstrap futureBootstrap = peer.bootstrap()
+						.setInetAddress(address).setPorts(masterPort).start();
+				futureBootstrap.awaitUninterruptibly();
+
+				if (!futureBootstrap.isSuccess()) {
+					System.out
+							.println("Bootstrap with direct connection failed. Reason = "
+									+ futureBootstrap.getFailedReason());
+					peer.shutdown();
+				}
+			}
+		}
+		// Future Discover
+		{
+			final FutureDiscover futureDiscover = peer.discover()
+					.setInetAddress(address).setPorts(masterPort).start();
+			futureDiscover.awaitUninterruptibly();
+>>>>>>> backtoold
 
 			if (futureBootstrap.isFailed()) {
 				System.out
+<<<<<<< HEAD
 						.println("Bootstrap with direct connection failed. Reason = "
 								+ futureBootstrap.failedReason());
 				tempPeer.shutdown();
@@ -118,6 +155,11 @@ public abstract class P2PBayService {
 						.println("Discover with direct connection failed. Reason = "
 								+ futureDiscover.failedReason());
 				tempPeer.shutdown();
+=======
+						.println("Discover with direct connection failed. Reason = "
+								+ futureDiscover.getFailedReason());
+				peer.shutdown();
+>>>>>>> backtoold
 			}
 		}
 
@@ -143,12 +185,12 @@ public abstract class P2PBayService {
 
 		try {
 			final Number160 locationKey = Number160.createHash(key);
-			final FutureGet future = peer.get(locationKey).domainKey(domain)
-					.all().start().awaitUninterruptibly();
-			Map<Number640, Data> data = future.dataMap();
+			final FutureDHT future = peer.get(locationKey).setDomainKey(domain)
+					.setAll(true).start().awaitUninterruptibly();
+			Map<Number160, Data> data = future.getDataMap();
 			if (future.isSuccess() && data != null) {
 				for (Data d : data.values()) {
-					ret.add(d.object());
+					ret.add(d.getObject());
 				}
 
 			}
@@ -172,14 +214,14 @@ public abstract class P2PBayService {
 	protected static Object get(final Number160 domain, final String key) {
 		try {
 			final Number160 locationKey = Number160.createHash(key);
-			final FutureGet future = peer.get(locationKey).domainKey(domain)
+			final FutureDHT future = peer.get(locationKey).setDomainKey(domain)
 					.start().awaitUninterruptibly();
 			if (future.isSuccess()) {
-				if (future.data() != null) {
-					return future.data().object();
+				if (future.getData() != null) {
+					return future.getData().getObject();
 				}
 			} else {
-				System.out.println(future.failedReason());
+				System.out.println(future.getFailedReason());
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -202,11 +244,11 @@ public abstract class P2PBayService {
 			final Object value) {
 		try {
 			final Number160 locationKey = Number160.createHash(key);
-			final FuturePut future = peer.put(locationKey).domainKey(domain)
-					.data(new Data(value)).start().awaitUninterruptibly();
+			final FutureDHT future = peer.put(locationKey).setDomainKey(domain)
+					.setData(new Data(value)).start().awaitUninterruptibly();
 
 			if (!future.isSuccess()) {
-				System.out.println(future.failedReason());
+				System.out.println(future.getFailedReason());
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -228,11 +270,11 @@ public abstract class P2PBayService {
 			final Object value) {
 		try {
 			final Number160 locationKey = Number160.createHash(key);
-			final FuturePut future = peer.add(locationKey).domainKey(domain)
-					.list(true).data(new Data(value)).start()
+			final FutureDHT future = peer.add(locationKey).setDomainKey(domain)
+					.setList(true).setData(new Data(value)).start()
 					.awaitUninterruptibly();
 			if (!future.isSuccess()) {
-				System.out.println(future.failedReason());
+				System.out.println(future.getFailedReason());
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -256,4 +298,5 @@ public abstract class P2PBayService {
 	 * .awaitUninterruptibly(); } catch (IOException e) { // TODO Auto-generated
 	 * catch block e.printStackTrace(); } }
 	 */
+
 }
