@@ -41,6 +41,9 @@ public class GossipDto implements Serializable {
 	public GossipDto(double w) {
 		weight = w;
 	}
+	public GossipDto(GossipDto g) {
+		weight = g.getWeight();
+	}
 	
 	
 

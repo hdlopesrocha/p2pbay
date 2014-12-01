@@ -83,10 +83,17 @@ public abstract class P2PBayService {
 	protected static void connect(final String masterIp, final int masterPort,
 			final int myPeerPort, Number160 myPeerId) throws IOException {
 
-		peer = new PeerBuilderDHT(new PeerBuilder(myPeerId).ports(myPeerPort)
-				.behindFirewall(true).start()).start();
+		Peer tempPeer =new PeerBuilder(myPeerId).ports(myPeerPort)
+				.behindFirewall(true).start();
+		
+		
+		
+		peer = new PeerBuilderDHT(tempPeer).start();
 		new IndirectReplication(peer).autoReplication(true).start();
 
+		
+
+		
 		final InetAddress address = InetAddress.getByName(masterIp);
 		// Future Discover
 		{
@@ -115,6 +122,8 @@ public abstract class P2PBayService {
 				peer.shutdown().awaitUninterruptibly();
 			}
 		}
+
+		new LaunchGossipService().execute();
 
 		System.out.println("*** PORT " + myPeerPort + " ***");
 	}
