@@ -99,8 +99,8 @@ public class LaunchGossipService extends P2PBayService {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					
-					System.out.println("W=" + temp.getWeight());
+				
+					System.out.println("W=" + 1f/temp.getWeight());
 					double newWeight = temp.getWeight();
 
 					GossipDto dto = new GossipDto(newWeight);
@@ -114,6 +114,9 @@ public class LaunchGossipService extends P2PBayService {
 						temp.setWeight(myW.getWeight());
 						break;
 					
+					}
+					else {
+						System.out.println(future.failedReason());
 					}
 				
 
