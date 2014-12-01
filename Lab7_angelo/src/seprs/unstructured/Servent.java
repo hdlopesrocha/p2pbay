@@ -8,6 +8,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 class ClientSocketThread extends Thread {
 	Servent sv;
@@ -24,7 +25,7 @@ class ClientSocketThread extends Thread {
 		try {
 			while (true) {
 				ois = new ObjectInputStream(s.getInputStream());
-				Message msg = (Message) ois.readObject();
+				Message msg = (Message) ois.readObject();				
 				sv.handleMsg(msg, s);
 			}
 		} catch (IOException e) {
@@ -51,7 +52,9 @@ public class Servent {
 	private ServerSocket serverSocket;
 	List<Socket> peers = new ArrayList<Socket>();
 	int id;
-	Document doc = new Document("Teste lixado");
+	Document doc = null;
+	int value = 1;
+	int weight = 0;
 
 	public Servent(int id) {
 		this.id = id;
@@ -78,14 +81,25 @@ public class Servent {
 	}
 
 	void acceptConnections() throws IOException {
-		while (true) {
-			Socket sock = serverSocket.accept();
-			synchronized (this) {
-				peers.add(sock);
-			}
-			new ClientSocketThread(this, sock).start();
+		new Thread(new Runnable() {
 
-		}
+			@Override
+			public void run() {
+				try {
+					while (true) {
+						Socket sock;
+						sock = serverSocket.accept();
+						synchronized (Servent.this) {
+							peers.add(sock);
+						}
+						new ClientSocketThread(Servent.this, sock).start();
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}).start();
+
 	}
 
 	synchronized void handleMsg(Message msg, Socket s) throws IOException {
@@ -102,19 +116,61 @@ public class Servent {
 			break;
 		case SEARCH:
 			System.out.println("###########  Entrou no SEARCH  ###########");
+<<<<<<< HEAD
+			SearchMessage hmsearch = (SearchMessage) msg;
+			if (this.doc == null) {
+				System.out.println("Documento Vazio!!\n");
+				this.searchWord(hmsearch);
+			} else if (this.doc.searchWord(hmsearch.getWord())) {
+				new ObjectOutputStream(s.getOutputStream())
+				.writeObject(new SearchMessageReply("Peer "+this.id+" have the word("+hmsearch.getWord()+") in your text\n"));
+			} else {
+				System.out.println("Documento " + hmsearch.getWord() + " não encontrado!!\n");
+				this.searchWord(hmsearch);
+			}
+			break;
+		case SEARCH_REPLY:
+			System.out.println("###########  Entrou no SEARCH_REPLY  ###########");
+			SearchMessageReply hmsgreply = (SearchMessageReply) msg;
+			System.out.printf("Received msg %s\n",
+					hmsgreply.getSrcId());
+=======
 			if (this.doc.searchWord((String)msg.getContent())) {
 				System.out.printf("Peer %d have the word(%s) in your text\n", this.id, msg.getContent());
 //				new ObjectOutputStream(s.getOutputStream())
 //						.writeObject(new HelloMessageReply(id));
 			}				
+>>>>>>> 43d8a9fee4d00655ac4f358c48ee45efe8f9fa83
 			break;
 		}
 	}
 	
+<<<<<<< HEAD
+	synchronized void searchWord(SearchMessage msg) throws IOException {
+		for (Socket soc : this.peers) {
+			ArrayList<String> peersSend = msg.getpeers();
+			String ipPort = soc.getInetAddress()+":"+soc.getPort();
+			
+			for (String str : peersSend) {
+				System.out.println("Lista de Peers que já foi enviado:");
+				System.out.println("Peer: " + str);
+			}
+			System.out.println("\n");
+			
+			if (!peersSend.contains(ipPort)) {
+				System.out.println("-----> searchWord enviado para " + ipPort);
+				msg.addPeer(ipPort);
+				new ObjectOutputStream(soc.getOutputStream())
+				.writeObject(msg);
+			}
+			
+		}
+=======
 	synchronized void searchWord(String word) throws IOException {
 		for (Socket soc : this.peers)
 			new ObjectOutputStream(soc.getOutputStream())
 			.writeObject(new Message(MessageType.SEARCH, word));
+>>>>>>> 43d8a9fee4d00655ac4f358c48ee45efe8f9fa83
 	}
 
 	/**
@@ -129,18 +185,38 @@ public class Servent {
 	 */
 	public static void main(String[] args) throws NumberFormatException,
 			UnknownHostException, IOException, ClassNotFoundException {
-		if (args.length >= 1) {
+		if (args.length >= 1) {			
+			System.out.println("#############  ID=" + args[0] + "  #############");
 			Servent sr = new Servent(Integer.parseInt(args[0]));
-			for (int x = 1; x < args.length; x += 2)
+			
+			if (Integer.parseInt(args[0])==1) {
+				sr.doc = new Document("Teste lixado");
+			} else if (Integer.parseInt(args[0])==2) {
+				sr.doc = new Document("Cenas fixes");
+			}
+			
+			if (args.length >= 2 && Integer.parseInt(args[1]) == 1)
+				sr.weight = 1;
+			
+			for (int x = 2; x < args.length; x += 2) {
+				System.out.println("for="+ x+"\n");
 				sr.connect(args[x], Integer.parseInt(args[x + 1]));
+			}
 			
-			System.out.println("Procura lixado:");
-			sr.searchWord("lixado");
+			if (Integer.parseInt(args[0]) != 1) {
+				System.out.println("Procura lixado:");
+				sr.searchWord(new SearchMessage("lixado"));
+				
+				System.out.println("Procura Teste:");
+				sr.searchWord(new SearchMessage("teste"));
+				
+				System.out.println("Procura lixado:");
+				sr.searchWord(new SearchMessage("cenas"));
+				
+				System.out.println("Procura Teste:");
+				sr.searchWord(new SearchMessage("fixes"));
+			}
 			
-			System.out.println("Procura Teste:");
-			sr.searchWord("teste");
-
-			System.out.println("Procura lixado:\n");
 			sr.acceptConnections();
 			
 			
