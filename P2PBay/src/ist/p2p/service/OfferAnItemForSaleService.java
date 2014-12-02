@@ -44,6 +44,8 @@ public class OfferAnItemForSaleService extends P2PBayService {
 			for (String token : uniqueTokens) {
 				add(DOMAIN_WORD, token, itemId);
 			}
+			++saleCount;
+System.out.println(saleCount);
 			return true;
 		}
 		return false;

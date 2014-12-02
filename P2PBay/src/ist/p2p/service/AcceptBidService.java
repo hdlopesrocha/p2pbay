@@ -54,7 +54,7 @@ public class AcceptBidService extends P2PBayService {
 
 			item.close();
 			set(DOMAIN_ITEM, id, item);
-
+			--saleCount;
 			return true;
 		}
 
