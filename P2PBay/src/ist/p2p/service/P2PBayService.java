@@ -35,9 +35,6 @@ public abstract class P2PBayService {
 	
 	static protected StorageGeneric storage = null;
 
-	static int userCount=0;
-
-	static int saleCount=0;
 	
 	public static final Number160 DOMAIN_GOSSIP = Number160
 			.createHash("gossip");
@@ -94,7 +91,7 @@ public abstract class P2PBayService {
 		configuration.setBehindFirewall(true);
 		
 		PeerMaker pm =new PeerMaker(myPeerId).setPorts(myPeerPort)
-				.setConfiguration(configuration);
+				.setConfiguration(configuration).setEnableIndirectReplication(true);
 		
 		storage = pm.getStorage();
 		peer = pm.makeAndListen();

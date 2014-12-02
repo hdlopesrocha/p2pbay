@@ -1,11 +1,12 @@
 package ist.p2p.service;
 
+import ist.p2p.domain.Item;
 import ist.p2p.dto.GossipDto;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.concurrent.locks.Lock;
 
 import net.tomp2p.futures.FutureDHT;
 import net.tomp2p.futures.FutureResponse;
@@ -15,8 +16,7 @@ import net.tomp2p.peers.Number480;
 import net.tomp2p.peers.PeerAddress;
 import net.tomp2p.rpc.ObjectDataReply;
 import net.tomp2p.storage.Data;
-import net.tomp2p.storage.KeyLock;
-import net.tomp2p.storage.Storage;
+import net.tomp2p.storage.StorageGeneric;
 
 public class LaunchGossipService extends P2PBayService {
 	private static RequestP2PConfiguration CONFIG = new RequestP2PConfiguration(
@@ -24,7 +24,8 @@ public class LaunchGossipService extends P2PBayService {
 	private boolean isLeader = false;
 	private GossipDto result;
 	private int lastPeersCount = -1;
-private boolean resetRequest=false;
+	private boolean resetRequest = false;
+
 	public GossipDto getResult() {
 		GossipDto ret = null;
 		synchronized (LaunchGossipService.this) {
@@ -36,11 +37,53 @@ private boolean resetRequest=false;
 	public void reset() {
 		resetRequest = true;
 	}
-	
+
+	private int getItemsOnSale() {
+		StorageGeneric storage = peer.getPeerBean().getStorage();
+		int salesCount = 0;
+		for (Entry<Number480, Data> i : storage.map().entrySet()) {
+			Number160 responsible = storage.findPeerIDForResponsibleContent(i
+					.getKey().getLocationKey());
+
+			if (i.getKey().getDomainKey().equals(DOMAIN_ITEM)
+					&& peer.getPeerID().equals(responsible)) {
+				try {
+					Item item = (Item) i.getValue().getObject();
+					if (!item.isClosed()) {
+						++salesCount;
+					}
+				//	System.out.println(i.getKey().getDomainKey());
+				} catch (ClassNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		return salesCount;
+	}
+
+	private double getUsersCount() {
+		StorageGeneric storage = peer.getPeerBean().getStorage();
+		int userCount = 0;
+		for (Entry<Number480, Data> i : storage.map().entrySet()) {
+			Number160 responsible = storage.findPeerIDForResponsibleContent(i
+					.getKey().getLocationKey());
+
+			if (i.getKey().getDomainKey().equals(DOMAIN_AUTH)
+					&& peer.getPeerID().equals(responsible)) {
+				++userCount;
+			}
+		}
+		return userCount;
+	}
+
 	@Override
 	public boolean execute() {
 		result = new GossipDto();
-	//	System.out.println("LAUNCH GOSSIP");
+		// System.out.println("LAUNCH GOSSIP");
 		peer.setObjectDataReply(new ObjectDataReply() {
 			@Override
 			public Object reply(PeerAddress arg0, Object arg1) throws Exception {
@@ -53,8 +96,8 @@ private boolean resetRequest=false;
 							synchronized (LaunchGossipService.this) {
 								result.setWeight(1);
 								result.setWaveId(result.getWaveId() + 1);
-								result.setAvgRegisteredUsers(userCount);
-								result.setAvgItemsOnSale(saleCount);								
+								result.setAvgRegisteredUsers(getUsersCount());
+								result.setAvgItemsOnSale(getItemsOnSale());
 							}
 							advertiseNeighbors();
 						}
@@ -67,8 +110,8 @@ private boolean resetRequest=false;
 
 						if (result.getWaveId() < dto.getWaveId()) {
 							result.setWeight(0);
-							result.setAvgRegisteredUsers(userCount);
-							result.setAvgItemsOnSale(saleCount);								
+							result.setAvgRegisteredUsers(getUsersCount());
+							result.setAvgItemsOnSale(getItemsOnSale());
 
 						}
 
@@ -76,14 +119,17 @@ private boolean resetRequest=false;
 								.getWeight()) / 2f;
 						result.setWeight(newWeight);
 						result.setWaveId(dto.getWaveId());
-						result.setAvgRegisteredUsers((result.getAvgRegisteredUsers() + dto.getAvgRegisteredUsers())/2f);
-						result.setAvgItemsOnSale((result.getAvgItemsOnSale() + dto.getAvgItemsOnSale())/2f);
+						result.setAvgRegisteredUsers((result
+								.getAvgRegisteredUsers() + dto
+								.getAvgRegisteredUsers()) / 2f);
+						result.setAvgItemsOnSale((result.getAvgItemsOnSale() + dto
+								.getAvgItemsOnSale()) / 2f);
 
 					}
 					advertiseNeighbors();
 
 				}
-				GossipDto ret=null;
+				GossipDto ret = null;
 				synchronized (LaunchGossipService.this) {
 					ret = new GossipDto(result);
 				}
@@ -105,7 +151,7 @@ private boolean resetRequest=false;
 							.setObject(Number160.ONE)
 							.setRequestP2PConfiguration(CONFIG).start();
 					future.awaitUninterruptibly();
-					
+
 					try {
 						Thread.sleep(1000);
 					} catch (InterruptedException e) {
@@ -123,7 +169,7 @@ private boolean resetRequest=false;
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
-			//	System.out.println("RESET");
+				// System.out.println("RESET");
 				FutureDHT future = peer.send(Number160.ZERO)
 						.setObject(Number160.ZERO)
 						.setRequestP2PConfiguration(CONFIG).start();
@@ -147,8 +193,8 @@ private boolean resetRequest=false;
 						neighbors.addAll(peer.getPeerBean().getPeerMap()
 								.getAll());
 
-						if (!resetRequest && (lastPeersCount == -1
-								|| neighbors.size() >= lastPeersCount)) {
+						if (!resetRequest
+								&& (lastPeersCount == -1 || neighbors.size() >= lastPeersCount)) {
 							lastPeersCount = neighbors.size();
 
 							PeerAddress address = neighbors.size() > 0 ? neighbors
@@ -172,12 +218,14 @@ private boolean resetRequest=false;
 											.getObject();
 									synchronized (LaunchGossipService.this) {
 										result.setWeight(myW.getWeight());
-										result.setAvgRegisteredUsers(myW.getAvgRegisteredUsers());
-										result.setAvgItemsOnSale(myW.getAvgItemsOnSale());
+										result.setAvgRegisteredUsers(myW
+												.getAvgRegisteredUsers());
+										result.setAvgItemsOnSale(myW
+												.getAvgItemsOnSale());
 									}
 									break;
 
-								} 
+								}
 							}
 
 						} else {

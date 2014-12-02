@@ -39,7 +39,6 @@ public class RegisterUserService extends P2PBayService {
 		final String salt = Utils.randomString(16);
 		final String hash = Utils.sha1(salt + password);
 		set(DOMAIN_AUTH, username, new Authentication(salt, hash));
-		++userCount;
 		return true;
 	}
 
