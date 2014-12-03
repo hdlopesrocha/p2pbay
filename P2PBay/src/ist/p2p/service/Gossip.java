@@ -18,27 +18,50 @@ import net.tomp2p.rpc.ObjectDataReply;
 import net.tomp2p.storage.Data;
 import net.tomp2p.storage.StorageGeneric;
 
-public class LaunchGossipService extends P2PBayService {
+public class Gossip extends P2PBayService {
 	private static RequestP2PConfiguration CONFIG = new RequestP2PConfiguration(
 			1, 10, 0);
-	private boolean isLeader = false;
-	private GossipDto result;
-	private int lastPeersCount = -1;
-	private boolean resetRequest = false;
+	private static boolean isLeader = false;
+	private static GossipDto currentResult = new GossipDto();
+	private static GossipDto lastResult = new GossipDto();
+	private static int consecutiveCounter = 0;
+	private static int lastPeersCount = -1;
+	private static boolean resetRequest = false;
+	private static Gossip gossip;
 
+	private Gossip(){
+		
+		
+	}
+	
+	
+	
+	
+	public static void addUser(int count) {
+		synchronized (currentResult) {
+			currentResult.setAvgRegisteredUsers(currentResult.getAvgRegisteredUsers() + count);
+		}
+	}
+
+	public static void addItemOnSale(int count) {
+		synchronized (currentResult) {
+			currentResult.setAvgItemsOnSale(currentResult.getAvgItemsOnSale() + count);
+		}
+	}
+	
 	public GossipDto getResult() {
 		GossipDto ret = null;
-		synchronized (LaunchGossipService.this) {
-			ret = new GossipDto(result);
+		synchronized (currentResult) {
+			ret = new GossipDto(currentResult);
 		}
 		return ret;
 	}
 
-	public void reset() {
+	private static void reset() {
 		resetRequest = true;
 	}
 
-	private int getItemsOnSale() {
+	private double getItemsOnSaleAux() {
 		StorageGeneric storage = peer.getPeerBean().getStorage();
 		int salesCount = 0;
 		for (Entry<Number480, Data> i : storage.map().entrySet()) {
@@ -52,7 +75,7 @@ public class LaunchGossipService extends P2PBayService {
 					if (!item.isClosed()) {
 						++salesCount;
 					}
-				//	System.out.println(i.getKey().getDomainKey());
+					// System.out.println(i.getKey().getDomainKey());
 				} catch (ClassNotFoundException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -65,7 +88,7 @@ public class LaunchGossipService extends P2PBayService {
 		return salesCount;
 	}
 
-	private double getUsersCount() {
+	private double getUsersCountAux() {
 		StorageGeneric storage = peer.getPeerBean().getStorage();
 		int userCount = 0;
 		for (Entry<Number480, Data> i : storage.map().entrySet()) {
@@ -82,7 +105,6 @@ public class LaunchGossipService extends P2PBayService {
 
 	@Override
 	public boolean execute() {
-		result = new GossipDto();
 		// System.out.println("LAUNCH GOSSIP");
 		peer.setObjectDataReply(new ObjectDataReply() {
 			@Override
@@ -93,11 +115,14 @@ public class LaunchGossipService extends P2PBayService {
 						if (!isLeader) {
 							// i am the leader!
 							isLeader = true;
-							synchronized (LaunchGossipService.this) {
-								result.setWeight(1);
-								result.setWaveId(result.getWaveId() + 1);
-								result.setAvgRegisteredUsers(getUsersCount());
-								result.setAvgItemsOnSale(getItemsOnSale());
+							synchronized (currentResult) {
+								lastResult = new GossipDto(currentResult);
+								currentResult.setWeight(1);
+								currentResult.setWaveId(currentResult.getWaveId() + 1);
+								currentResult.setAvgRegisteredUsers(getUsersCountAux());
+								currentResult.setAvgItemsOnSale(getItemsOnSaleAux());
+								
+								
 							}
 							advertiseNeighbors();
 						}
@@ -106,23 +131,24 @@ public class LaunchGossipService extends P2PBayService {
 					}
 				} else if (arg1 instanceof GossipDto) {
 					GossipDto dto = (GossipDto) arg1;
-					synchronized (LaunchGossipService.this) {
+					synchronized (currentResult) {
 
-						if (result.getWaveId() < dto.getWaveId()) {
-							result.setWeight(0);
-							result.setAvgRegisteredUsers(getUsersCount());
-							result.setAvgItemsOnSale(getItemsOnSale());
+						if (currentResult.getWaveId() < dto.getWaveId()) {
+							lastResult = new GossipDto(currentResult);
+							currentResult.setWeight(0);
+							currentResult.setAvgRegisteredUsers(getUsersCountAux());
+							currentResult.setAvgItemsOnSale(getItemsOnSaleAux());
 
 						}
 
-						double newWeight = (result.getWeight() + dto
+						double newWeight = (currentResult.getWeight() + dto
 								.getWeight()) / 2f;
-						result.setWeight(newWeight);
-						result.setWaveId(dto.getWaveId());
-						result.setAvgRegisteredUsers((result
+						currentResult.setWeight(newWeight);
+						currentResult.setWaveId(dto.getWaveId());
+						currentResult.setAvgRegisteredUsers((currentResult
 								.getAvgRegisteredUsers() + dto
 								.getAvgRegisteredUsers()) / 2f);
-						result.setAvgItemsOnSale((result.getAvgItemsOnSale() + dto
+						currentResult.setAvgItemsOnSale((currentResult.getAvgItemsOnSale() + dto
 								.getAvgItemsOnSale()) / 2f);
 
 					}
@@ -130,8 +156,8 @@ public class LaunchGossipService extends P2PBayService {
 
 				}
 				GossipDto ret = null;
-				synchronized (LaunchGossipService.this) {
-					ret = new GossipDto(result);
+				synchronized (currentResult) {
+					ret = new GossipDto(currentResult);
 				}
 				return ret;
 			}
@@ -204,8 +230,8 @@ public class LaunchGossipService extends P2PBayService {
 							if (address != null) {
 
 								GossipDto copy;
-								synchronized (LaunchGossipService.this) {
-									copy = new GossipDto(result);
+								synchronized (currentResult) {
+									copy = new GossipDto(currentResult);
 								}
 
 								FutureResponse future = peer
@@ -216,12 +242,27 @@ public class LaunchGossipService extends P2PBayService {
 								if (!future.isFailed()) {
 									GossipDto myW = (GossipDto) future
 											.getObject();
-									synchronized (LaunchGossipService.this) {
-										result.setWeight(myW.getWeight());
-										result.setAvgRegisteredUsers(myW
-												.getAvgRegisteredUsers());
-										result.setAvgItemsOnSale(myW
-												.getAvgItemsOnSale());
+									synchronized (currentResult) {
+										if(currentResult.sameValues(myW)){
+											consecutiveCounter++;
+										}
+										else {
+											consecutiveCounter = 0;
+										}
+										
+										if(consecutiveCounter>=32){
+											//System.out.println("CONVERGED! "+ currentResult.toString());
+											consecutiveCounter = 0;
+											reset();
+										}else {
+										
+											currentResult.setWeight(myW.getWeight());
+											currentResult.setAvgRegisteredUsers(myW
+													.getAvgRegisteredUsers());
+											currentResult.setAvgItemsOnSale(myW
+													.getAvgItemsOnSale());
+									
+										}
 									}
 									break;
 
@@ -241,6 +282,25 @@ public class LaunchGossipService extends P2PBayService {
 				}
 			}
 		}).start();
+	}
+
+	public static double getNodeCount() {
+		return lastResult.getNodeCount();
+	}
+	
+	public static double getRegisteredUsers(){
+		return lastResult.getRegisteredUsers();
+	}
+	
+	public static double getItemsOnSale(){
+		return lastResult.getItemsOnSale();
+	}
+	
+	public static void start() {
+		if(gossip==null){
+			gossip=new Gossip();
+			gossip.execute();
+		}
 	}
 
 }

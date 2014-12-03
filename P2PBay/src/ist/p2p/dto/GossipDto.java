@@ -42,14 +42,6 @@ public class GossipDto implements Serializable {
 		return weight;
 	}
 
-	public double getNodeCount() {
-		return Math.round(1/weight);
-	}
-	
-	public double getRegisteredUsers(){
-		return Math.round(avgRegisteredUsers/weight);
-	}
-	
 	public double getAvgRegisteredUsers() {
 		return avgRegisteredUsers;
 	}
@@ -66,6 +58,14 @@ public class GossipDto implements Serializable {
 		this.avgItemsOnSale = avgItemsOnSale;
 	}
 
+	public double getNodeCount() {
+		return Math.round(1/weight);
+	}
+	
+	public double getRegisteredUsers(){
+		return Math.round(avgRegisteredUsers/weight);
+	}
+	
 	public double getItemsOnSale(){
 		return Math.round(avgItemsOnSale/weight);
 	}
@@ -75,11 +75,17 @@ public class GossipDto implements Serializable {
 		this.weight = weight;
 	}
 
+	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -6867433225365269043L;
-
+	private static double DELTA = 0.0000001d;
+	
+	public String toString(){
+		return "W:"+(1/weight)+ " I:"+(avgItemsOnSale/weight)+ " U:"+(avgRegisteredUsers/weight);
+	}
+	
 	public GossipDto() {
 		weight = 0;
 		avgItemsOnSale = 0;
@@ -94,5 +100,10 @@ public class GossipDto implements Serializable {
 	}
 	
 	
-
+	public boolean sameValues(GossipDto dto){
+		return Math.abs(weight - dto.getWeight()) <  DELTA && 
+				Math.abs(avgItemsOnSale - dto.getAvgItemsOnSale()) <  DELTA && 
+				Math.abs(avgRegisteredUsers - dto.getAvgRegisteredUsers()) <  DELTA;
+	}
+	
 }

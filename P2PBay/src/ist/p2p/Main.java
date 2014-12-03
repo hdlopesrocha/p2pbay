@@ -8,7 +8,7 @@ import ist.p2p.service.AuthenticateUserService;
 import ist.p2p.service.BidAnItemService;
 import ist.p2p.service.ConnectP2PBayService;
 import ist.p2p.service.GetItemByIdService;
-import ist.p2p.service.LaunchGossipService;
+import ist.p2p.service.Gossip;
 import ist.p2p.service.OfferAnItemForSaleService;
 import ist.p2p.service.P2PBayService;
 import ist.p2p.service.RegisterUserService;
@@ -72,14 +72,14 @@ public class Main {
 			service = new ConnectP2PBayService();
 		}
 		service.execute();
-
+		
 		final String usersFileName = Utils.getArgValue("-u", args);
 		if (usersFileName != null) {
 			loadUsersFile(usersFileName);
 		}
-		
-		P2PBayService.gossip = new LaunchGossipService();
-		P2PBayService.gossip.execute();
+		Gossip.start();
+
+
 		final Scanner scanner = new Scanner(System.in);
 		while (true) {
 			commandLine(scanner);
@@ -156,10 +156,9 @@ public class Main {
 	}
 
 	private static void viewManagement(String username, Scanner scanner) {
-		System.out.println("Nodes count = "+ P2PBayService.gossip.getResult().getNodeCount());
-		System.out.println("Users count = "+ P2PBayService.gossip.getResult().getRegisteredUsers());
-		System.out.println("Items on sale count = "+ P2PBayService.gossip.getResult().getItemsOnSale());
-		P2PBayService.gossip.reset();
+		System.out.println("Nodes count = "+ Gossip.getNodeCount());
+		System.out.println("Users count = "+ Gossip.getRegisteredUsers());
+		System.out.println("Items on sale count = "+ Gossip.getItemsOnSale());
 	}
 
 	/**

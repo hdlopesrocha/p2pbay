@@ -68,7 +68,6 @@ public abstract class P2PBayService {
 
 	
 	
-	public static LaunchGossipService gossip;
 	
 	/**
 	 * Connect.
@@ -243,6 +242,10 @@ public abstract class P2PBayService {
 		}
 	}
 
+	
+	
+
+	
 	/**
 	 * Store.
 	 *
