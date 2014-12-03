@@ -1,16 +1,17 @@
 package ist.p2p.service;
 
 import java.io.IOException;
+import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import net.tomp2p.connection.Bindings;
 import net.tomp2p.futures.FutureBootstrap;
 import net.tomp2p.futures.FutureDHT;
 import net.tomp2p.futures.FutureDiscover;
-import net.tomp2p.p2p.ConnectionConfiguration;
 import net.tomp2p.p2p.Peer;
 import net.tomp2p.p2p.PeerMaker;
 import net.tomp2p.peers.Number160;
@@ -86,16 +87,31 @@ public abstract class P2PBayService {
 	protected static void connect(final String masterIp, final int masterPort,
 			final int myPeerPort, Number160 myPeerId) throws IOException {
 
-		ConnectionConfiguration configuration = new ConnectionConfiguration();
-		configuration.setBehindFirewall(true);
 		
-		PeerMaker pm =new PeerMaker(myPeerId).setPorts(myPeerPort)
-				.setConfiguration(configuration).setEnableIndirectReplication(true);
-		
+		Bindings bindings=new Bindings();
+		PeerMaker pm =new PeerMaker(myPeerId).setPorts(myPeerPort).setBindings(bindings)
+				.setEnableIndirectReplication(true);
 		storage = pm.getStorage();
 		peer = pm.makeAndListen();
+		peer.getConfiguration().setBehindFirewall(true);
 
-		final InetAddress address = InetAddress.getByName(masterIp);
+		final InetAddress address = Inet4Address.getByName(masterIp);
+
+		// Future Discover
+		{
+			final FutureDiscover futureDiscover = peer.discover()
+					.setInetAddress(address).setPorts(masterPort).start();
+			futureDiscover.awaitUninterruptibly();
+
+			if (!futureDiscover.isSuccess()) {
+				System.out
+						.println("Discover with direct connection failed. Reason = "
+								+ futureDiscover.getFailedReason());
+				peer.shutdown();
+			}
+		}
+		
+		
 		if (myPeerPort != 1024) {
 			// Future Bootstrap - slave
 			{
@@ -111,19 +127,7 @@ public abstract class P2PBayService {
 				}
 			}
 		}
-		// Future Discover
-		{
-			final FutureDiscover futureDiscover = peer.discover()
-					.setInetAddress(address).setPorts(masterPort).start();
-			futureDiscover.awaitUninterruptibly();
 
-			if (!futureDiscover.isSuccess()) {
-				System.out
-						.println("Discover with direct connection failed. Reason = "
-								+ futureDiscover.getFailedReason());
-				peer.shutdown();
-			}
-		}
 
 		
 
