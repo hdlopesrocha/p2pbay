@@ -38,7 +38,7 @@
 			<patternset>
 				<include name="**/*" />
 			</patternset>
-			<fileset dir="${lib.dir}" includes="*.jar" excludes="TomP2P*" />
+			<fileset dir="${lib.dir}" includes="*.jar" />
 		</unjar>
 	</target>
 
