@@ -40,10 +40,10 @@ public class ConnectP2PBayService extends P2PBayService {
 	/**
 	 * Instantiates a new connect p2 p bay service.
 	 */
-	public ConnectP2PBayService() {
+	public ConnectP2PBayService(int port) {
 		this.masterIp = "127.0.0.1";
-		this.masterPort = 1024;
-		this.myPort = 1024;
+		this.masterPort = port;
+		this.myPort = port;
 		this.myId = Number160.ONE;
 
 	}
