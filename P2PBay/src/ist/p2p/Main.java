@@ -1,5 +1,6 @@
 package ist.p2p;
 
+
 import ist.p2p.dto.BidDto;
 import ist.p2p.dto.ItemDto;
 import ist.p2p.dto.PurchaseDto;
@@ -10,7 +11,6 @@ import ist.p2p.service.ConnectP2PBayService;
 import ist.p2p.service.GetItemByIdService;
 import ist.p2p.service.Gossip;
 import ist.p2p.service.OfferAnItemForSaleService;
-import ist.p2p.service.P2PBayService;
 import ist.p2p.service.RegisterUserService;
 import ist.p2p.service.SearchAnItemService;
 import ist.p2p.service.ViewUserHistoryService;
@@ -64,14 +64,16 @@ public class Main {
 		//ResourceLeakDetector.setLevel(Level.DISABLED);
 		ConnectP2PBayService service;
 		final String ip = Utils.getArgValue("-i", args);
+		final String port = Utils.getArgValue("-b", args);
+		
 		if (ip != null) {
 			final String[] splits = ip.split(":");
-			service = new ConnectP2PBayService(splits[0],
-					Integer.valueOf(splits[1]));
-		} else {
-			service = new ConnectP2PBayService();
+			service = new ConnectP2PBayService(splits[0],Integer.valueOf(splits[1]));
+			service.execute();
+		} else if(port!=null) {
+			service = new ConnectP2PBayService(Integer.valueOf(port));
+			service.execute();
 		}
-		service.execute();
 		
 		final String usersFileName = Utils.getArgValue("-u", args);
 		if (usersFileName != null) {

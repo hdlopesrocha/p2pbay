@@ -12,7 +12,9 @@
 	<property name="main-class" value="ist.p2p.Main" />
 	<property name="java-args1" value="-u users.txt" />
 	<property name="java-args2" value="-i localhost:1024" />
-
+	<property name="ant.build.javac.source" value="1.7"/>
+	<property name="ant.build.javac.target" value="1.7"/>
+	
 	<path id="classpath">
 		<pathelement location="${build.classes}" />
 		<fileset dir="${lib.dir}">
