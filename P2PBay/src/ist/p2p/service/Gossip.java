@@ -4,7 +4,6 @@ import ist.p2p.domain.Item;
 import ist.p2p.dto.GossipDto;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -217,9 +216,8 @@ public class Gossip extends P2PBayService {
 					try {
 						Thread.sleep(10);
 
-						List<PeerAddress> neighbors = new ArrayList<PeerAddress>();
-						neighbors.addAll(peer.getPeerBean().getPeerMap()
-								.getAll());
+						List<PeerAddress> neighbors = peer.getPeerBean()
+								.getPeerMap().getAll();
 
 						if (!resetRequest
 								&& (lastPeersCount == -1 || neighbors.size() >= lastPeersCount)) {
@@ -227,51 +225,45 @@ public class Gossip extends P2PBayService {
 
 							PeerAddress address = neighbors.size() > 0 ? neighbors
 									.get(RANDOM.nextInt(neighbors.size()))
-									: null;
+									: peer.getPeerAddress();
 
-							if (address != null) {
+							GossipDto copy;
+							synchronized (currentResult) {
+								copy = new GossipDto(currentResult);
+							}
 
-								GossipDto copy;
-								synchronized (currentResult) {
-									copy = new GossipDto(currentResult);
-								}
+							FutureResponse future = peer.sendDirect(address)
+									.setObject(copy).start();
+							future.awaitUninterruptibly();
 
-								FutureResponse future = peer
-										.sendDirect(address).setObject(copy)
-										.start();
-								future.awaitUninterruptibly();
-
-								if (!future.isFailed()) {
-									GossipDto myW = (GossipDto) future
-											.getObject();
-									if (myW != null) {
-										synchronized (currentResult) {
-											if (currentResult.sameValues(myW)) {
-												consecutiveCounter++;
-											} else {
-												consecutiveCounter = 0;
-											}
-
-											if (consecutiveCounter >= 32) {
-												// System.out.println("CONVERGED! "+
-												// currentResult.toString());
-												consecutiveCounter = 0;
-												reset();
-											} else {
-
-												currentResult.setWeight(myW
-														.getWeight());
-												currentResult
-														.setAvgRegisteredUsers(myW
-																.getAvgRegisteredUsers());
-												currentResult.setAvgItemsOnSale(myW
-														.getAvgItemsOnSale());
-
-											}
+							if (!future.isFailed()) {
+								GossipDto myW = (GossipDto) future.getObject();
+								if (myW != null) {
+									synchronized (currentResult) {
+										if (currentResult.sameValues(myW)) {
+											consecutiveCounter++;
+										} else {
+											consecutiveCounter = 0;
 										}
 
-										break;
+										if (consecutiveCounter >= 32) {
+											// System.out.println("CONVERGED! "+
+											// currentResult.toString());
+											consecutiveCounter = 0;
+											reset();
+										} else {
+
+											currentResult.setWeight(myW
+													.getWeight());
+											currentResult.setAvgRegisteredUsers(myW
+													.getAvgRegisteredUsers());
+											currentResult.setAvgItemsOnSale(myW
+													.getAvgItemsOnSale());
+
+										}
 									}
+
+									break;
 								}
 							}
 

@@ -73,6 +73,11 @@ public class Main {
 		} else if(port!=null) {
 			service = new ConnectP2PBayService(Integer.valueOf(port));
 			service.execute();
+		}else {
+			System.out.println("-b <port> // for boot strap");
+			System.out.println("-i <ip:port> // connect to peer");
+			System.out.println("-u <filename> // load users file");
+			System.exit(0);
 		}
 		
 		final String usersFileName = Utils.getArgValue("-u", args);
