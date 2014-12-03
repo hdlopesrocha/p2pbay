@@ -55,6 +55,7 @@ public class BidAnItemService extends P2PBayService {
 
 			/* add to item bids */
 			add(DOMAIN_ITEM_BIDS, id, bidKey);
+			
 			return true;
 		}
 		return false;

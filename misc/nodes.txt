@@ -1,0 +1,9 @@
+planetlab-um10.di.uminho.pt
+planetlab-um00.di.uminho.pt
+planetlab-3.imperial.ac.uk
+planetlab2.di.unito.it
+planetlab1.eurecom.fr
+planetlab-2.tagus.ist.utl.pt
+planetlab1.research.nicta.com.au
+planetlab1.cs.uit.no
+planetlab2.diku.dk

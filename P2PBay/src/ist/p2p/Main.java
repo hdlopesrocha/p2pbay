@@ -8,7 +8,9 @@ import ist.p2p.service.AuthenticateUserService;
 import ist.p2p.service.BidAnItemService;
 import ist.p2p.service.ConnectP2PBayService;
 import ist.p2p.service.GetItemByIdService;
+import ist.p2p.service.Gossip;
 import ist.p2p.service.OfferAnItemForSaleService;
+import ist.p2p.service.P2PBayService;
 import ist.p2p.service.RegisterUserService;
 import ist.p2p.service.SearchAnItemService;
 import ist.p2p.service.ViewUserHistoryService;
@@ -70,11 +72,14 @@ public class Main {
 			service = new ConnectP2PBayService();
 		}
 		service.execute();
-
+		
 		final String usersFileName = Utils.getArgValue("-u", args);
 		if (usersFileName != null) {
 			loadUsersFile(usersFileName);
 		}
+		Gossip.start();
+
+
 		final Scanner scanner = new Scanner(System.in);
 		while (true) {
 			commandLine(scanner);
@@ -116,6 +121,7 @@ public class Main {
 			System.out.println("4) bid on an item");
 			System.out.println("5) view the details of an item");
 			System.out.println("6) view purchase and bidding history");
+			System.out.println("7) management");
 			System.out.println("0) logout");
 			System.out.print("option: ");
 
@@ -133,6 +139,8 @@ public class Main {
 					viewItemDetailsMenu(username, scanner);
 				} else if (option == 6) {
 					viewHistoryMenu(username, scanner);
+				}  else if (option == 7) {
+					viewManagement(username, scanner);
 				} else if (option == 0) {
 					break;
 				} else {
@@ -145,6 +153,12 @@ public class Main {
 		}
 
 		System.out.println("See you next time!");
+	}
+
+	private static void viewManagement(String username, Scanner scanner) {
+		System.out.println("Nodes count = "+ Gossip.getNodeCount());
+		System.out.println("Users count = "+ Gossip.getRegisteredUsers());
+		System.out.println("Items on sale count = "+ Gossip.getItemsOnSale());
 	}
 
 	/**

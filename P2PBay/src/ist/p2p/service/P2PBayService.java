@@ -15,6 +15,7 @@ import net.tomp2p.p2p.Peer;
 import net.tomp2p.p2p.PeerMaker;
 import net.tomp2p.peers.Number160;
 import net.tomp2p.storage.Data;
+import net.tomp2p.storage.StorageGeneric;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -31,7 +32,10 @@ public abstract class P2PBayService {
 
 	/** The peer. */
 	static protected Peer peer = null;
+	
+	static protected StorageGeneric storage = null;
 
+	
 	public static final Number160 DOMAIN_GOSSIP = Number160
 			.createHash("gossip");
 
@@ -62,6 +66,9 @@ public abstract class P2PBayService {
 	/** The Constant RANDOM. */
 	public static final Random RANDOM = new Random();
 
+	
+	
+	
 	/**
 	 * Connect.
 	 *
@@ -81,8 +88,12 @@ public abstract class P2PBayService {
 
 		ConnectionConfiguration configuration = new ConnectionConfiguration();
 		configuration.setBehindFirewall(true);
-		peer = new PeerMaker(myPeerId).setPorts(myPeerPort)
-				.setConfiguration(configuration).makeAndListen();
+		
+		PeerMaker pm =new PeerMaker(myPeerId).setPorts(myPeerPort)
+				.setConfiguration(configuration).setEnableIndirectReplication(true);
+		
+		storage = pm.getStorage();
+		peer = pm.makeAndListen();
 
 		final InetAddress address = InetAddress.getByName(masterIp);
 		if (myPeerPort != 1024) {
@@ -114,7 +125,7 @@ public abstract class P2PBayService {
 			}
 		}
 
-		new LaunchGossipService().execute();
+		
 
 		System.out.println("*** PORT " + myPeerPort + " ***");
 	}
@@ -231,6 +242,10 @@ public abstract class P2PBayService {
 		}
 	}
 
+	
+	
+
+	
 	/**
 	 * Store.
 	 *
