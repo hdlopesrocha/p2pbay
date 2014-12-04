@@ -80,10 +80,10 @@ public class GossipDto implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = -6867433225365269043L;
-	private static double DELTA = 0.0000001d;
+	private static double DELTA = 0.000001d;
 	
 	public String toString(){
-		return "W:"+(1/weight)+ " I:"+(avgItemsOnSale/weight)+ " U:"+(avgRegisteredUsers/weight);
+		return "WaveId:"+ waveId+" Weight:"+(1/weight)+ " Items:"+(avgItemsOnSale/weight)+ " Users:"+(avgRegisteredUsers/weight);
 	}
 	
 	public GossipDto() {

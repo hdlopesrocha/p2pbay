@@ -3,6 +3,9 @@ package ist.p2p.service;
 import ist.p2p.domain.Item;
 import ist.p2p.dto.GossipDto;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map.Entry;
@@ -260,6 +263,28 @@ public class Gossip extends P2PBayService {
 											currentResult.setAvgItemsOnSale(myW
 													.getAvgItemsOnSale());
 
+											try {
+												File file = new File("data.txt");
+
+												// if file doesnt exists, then
+												// create it
+												if (!file.exists()) {
+													file.createNewFile();
+												}
+
+												// true = append file
+												FileWriter fileWritter = new FileWriter(
+														file.getName(), true);
+												BufferedWriter bufferWritter = new BufferedWriter(
+														fileWritter);
+												bufferWritter
+														.write(currentResult
+																.toString());
+												bufferWritter.close();
+											} catch (Exception e) {
+												e.printStackTrace();
+											}
+
 										}
 									}
 
@@ -282,16 +307,16 @@ public class Gossip extends P2PBayService {
 		}).start();
 	}
 
-	public static double getNodeCount() {
-		return lastResult.getNodeCount();
+	public static int getNodeCount() {
+		return (int) lastResult.getNodeCount();
 	}
 
-	public static double getRegisteredUsers() {
-		return lastResult.getRegisteredUsers();
+	public static int getRegisteredUsers() {
+		return (int) lastResult.getRegisteredUsers();
 	}
 
-	public static double getItemsOnSale() {
-		return lastResult.getItemsOnSale();
+	public static int getItemsOnSale() {
+		return (int) lastResult.getItemsOnSale();
 	}
 
 	public static void start() {
