@@ -1,0 +1,20 @@
+planetlab-um10.di.uminho.pt
+planetlab1.upc.es
+planetlab2.upc.es
+iraplab2.iralab.uni-karlsruhe.de
+planetlab01.tkn.tu-berlin.de               falta de memoria para arrancar o java
+iraplab1.iralab.uni-karlsruhe.de
+ple4.ipv6.lip6.fr                          falta de memoria para arrancar o java
+planetlab2.di.unito.it                     /bin/su: cannot set user id: Resource temporarily unavailable
+planetlab1.cnds.jhu.edu                    -bash: java: command not found
+ple3.ipv6.lip6.fr
+planetlab-1.tagus.ist.utl.pt
+planetlab1.eurecom.fr
+planetlab-2.tagus.ist.utl.pt
+planetlab-um00.di.uminho.pt                /bin/su: cannot set user id: Resource temporarily unavailable
+planetlab-3.imperial.ac.uk
+planetvs2.informatik.uni-stuttgart.de      /bin/su: cannot set user id: Resource temporarily unavailable
+ple6.ipv6.lip6.fr
+planetlab1.research.nicta.com.au           sh: java: command not found
+planetlab1.cs.uit.no                       /bin/su: cannot set user id: Resource temporarily unavailable
+planetlab2.diku.dk

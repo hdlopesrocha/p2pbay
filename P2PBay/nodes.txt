@@ -6,7 +6,6 @@ planetlab01.tkn.tu-berlin.de
 iraplab1.iralab.uni-karlsruhe.de
 ple4.ipv6.lip6.fr
 planetlab2.di.unito.it
-planetlab1.cnds.jhu.edu
 ple3.ipv6.lip6.fr
 planetlab-1.tagus.ist.utl.pt
 planetlab1.eurecom.fr
@@ -15,6 +14,5 @@ planetlab-um00.di.uminho.pt
 planetlab-3.imperial.ac.uk
 planetvs2.informatik.uni-stuttgart.de
 ple6.ipv6.lip6.fr
-planetlab1.research.nicta.com.au
 planetlab1.cs.uit.no
 planetlab2.diku.dk
