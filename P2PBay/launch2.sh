@@ -1,5 +1,5 @@
 cd bin
-gnome-terminal -e 'java -cp .:../lib/* ist/p2p/Main -u ../users.txt' & 
+gnome-terminal -e 'java -cp .:../lib/* ist/p2p/Main -u ../users.txt -b 1024' & 
 x=1
 while [ $x -lt 10 ]
 do

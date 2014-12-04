@@ -95,7 +95,7 @@ public abstract class P2PBayService {
 		peer = pm.makeAndListen();
 		peer.getConfiguration().setBehindFirewall(true);
 
-		final InetAddress address = Inet4Address.getByName(masterIp);
+		final InetAddress address = InetAddress.getByName(masterIp);
 
 		// Future Discover
 		{
