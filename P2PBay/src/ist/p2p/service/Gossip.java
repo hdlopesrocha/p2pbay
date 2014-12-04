@@ -30,6 +30,11 @@ public class Gossip extends P2PBayService {
 	private static int lastPeersCount = -1;
 	private static boolean resetRequest = false;
 	private static Gossip gossip;
+	private static boolean Statistics = false;
+
+	public static void setStatisticsTrue() {
+		Gossip.Statistics = true;
+	}
 
 	private Gossip() {
 
@@ -167,6 +172,7 @@ public class Gossip extends P2PBayService {
 			}
 		});
 		chooseLeader();
+		
 		return true;
 	}
 
@@ -262,29 +268,9 @@ public class Gossip extends P2PBayService {
 													.getAvgRegisteredUsers());
 											currentResult.setAvgItemsOnSale(myW
 													.getAvgItemsOnSale());
-
-											try {
-												File file = new File("data.txt");
-
-												// if file doesnt exists, then
-												// create it
-												if (!file.exists()) {
-													file.createNewFile();
-												}
-
-												// true = append file
-												FileWriter fileWritter = new FileWriter(
-														file.getName(), true);
-												BufferedWriter bufferWritter = new BufferedWriter(
-														fileWritter);
-												bufferWritter
-														.write(currentResult
-																.toString()+"\n");
-												bufferWritter.close();
-											} catch (Exception e) {
-												e.printStackTrace();
+											if (Gossip.Statistics) {
+												generateStatistics();
 											}
-
 										}
 									}
 
@@ -305,6 +291,27 @@ public class Gossip extends P2PBayService {
 				}
 			}
 		}).start();
+	}
+	
+	private void generateStatistics() {
+		try {
+			File file = new File("data.txt");
+			
+			// if file doesnt exists, then
+			// create it
+			if (!file.exists()) {
+				file.createNewFile();
+			}
+			
+			// true = append file
+			FileWriter fileWritter = new FileWriter(file.getName(), true);
+			BufferedWriter bufferWritter = new BufferedWriter(fileWritter);
+			bufferWritter.write("\t"+currentResult.getNodeCount()+"\t"+currentResult.getRegisteredUsers()+"\t"+currentResult.getItemsOnSale()+"\n");
+			bufferWritter.close();
+			System.out.print("\t"+currentResult.getNodeCount()+"\t"+currentResult.getRegisteredUsers()+"\t"+currentResult.getItemsOnSale()+"\n");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public static int getNodeCount() {

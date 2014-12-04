@@ -65,6 +65,7 @@ public class Main {
 		ConnectP2PBayService service;
 		final String ip = Utils.getArgValue("-i", args);
 		final String port = Utils.getArgValue("-b", args);
+		final boolean statistics = Utils.argExists("-s", args);
 		
 		if (ip != null) {
 			final String[] splits = ip.split(":");
@@ -83,6 +84,9 @@ public class Main {
 		final String usersFileName = Utils.getArgValue("-u", args);
 		if (usersFileName != null) {
 			loadUsersFile(usersFileName);
+		}
+		if (statistics) {
+			Gossip.setStatisticsTrue();
 		}
 		Gossip.start();
 
