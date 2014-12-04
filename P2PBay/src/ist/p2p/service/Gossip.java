@@ -295,7 +295,7 @@ public class Gossip extends P2PBayService {
 	
 	private void generateStatistics() {
 		try {
-			File file = new File("data.txt");
+			File file = new File("data.dat");
 			
 			// if file doesnt exists, then
 			// create it
@@ -306,9 +306,9 @@ public class Gossip extends P2PBayService {
 			// true = append file
 			FileWriter fileWritter = new FileWriter(file.getName(), true);
 			BufferedWriter bufferWritter = new BufferedWriter(fileWritter);
-			bufferWritter.write("\t"+currentResult.getNodeCount()+"\t"+currentResult.getRegisteredUsers()+"\t"+currentResult.getItemsOnSale()+"\n");
+			bufferWritter.write(currentResult.getNodeCount()+"\t"+currentResult.getRegisteredUsers()+"\t"+currentResult.getItemsOnSale()+"\n");
 			bufferWritter.close();
-			System.out.print("\t"+currentResult.getNodeCount()+"\t"+currentResult.getRegisteredUsers()+"\t"+currentResult.getItemsOnSale()+"\n");
+			System.out.print("Nodes="+currentResult.getNodeCount()+";  Registered Users="+currentResult.getRegisteredUsers()+";  Items On Sale"+currentResult.getItemsOnSale()+"\n");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
