@@ -85,7 +85,7 @@ public abstract class P2PBayService {
 	 *             Signals that an I/O exception has occurred.
 	 */
 	protected static void connect(final String masterIp, final int masterPort,
-			final int myPeerPort, Number160 myPeerId) throws IOException {
+			final int myPeerPort, Number160 myPeerId, boolean isBootStrap) throws IOException {
 
 		
 		Bindings bindings=new Bindings();
@@ -112,7 +112,7 @@ public abstract class P2PBayService {
 		}
 		
 		
-		if (myPeerPort != 1024) {
+		if (!isBootStrap) {
 			// Future Bootstrap - slave
 			{
 				final FutureBootstrap futureBootstrap = peer.bootstrap()

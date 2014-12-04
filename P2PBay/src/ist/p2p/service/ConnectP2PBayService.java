@@ -21,6 +21,8 @@ public class ConnectP2PBayService extends P2PBayService {
 
 	/** The my id. */
 	private Number160 myId;
+	
+	private boolean isBootStrap;
 
 	/**
 	 * Instantiates a new connect p2 p bay service.
@@ -35,6 +37,7 @@ public class ConnectP2PBayService extends P2PBayService {
 		this.masterPort = port;
 		this.myPort = 1025 + RANDOM.nextInt(60000);
 		this.myId = new Number160(RANDOM);
+		this.isBootStrap = false;
 	}
 
 	/**
@@ -45,6 +48,7 @@ public class ConnectP2PBayService extends P2PBayService {
 		this.masterPort = port;
 		this.myPort = port;
 		this.myId = Number160.ONE;
+		this.isBootStrap = true;
 
 	}
 
@@ -56,7 +60,7 @@ public class ConnectP2PBayService extends P2PBayService {
 	@Override
 	public boolean execute() {
 		try {
-			connect(masterIp, masterPort, myPort, myId);
+			connect(masterIp, masterPort, myPort, myId,isBootStrap);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
