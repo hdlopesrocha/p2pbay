@@ -83,7 +83,7 @@ public class GossipDto implements Serializable {
 	private static double DELTA = 0.000001d;
 	
 	public String toString(){
-		return "WaveId:"+ waveId+" Weight:"+(1/weight)+ " Items:"+(avgItemsOnSale/weight)+ " Users:"+(avgRegisteredUsers/weight);
+		return  waveId+","+(1/weight)+ ","+(avgItemsOnSale/weight)+ ","+(avgRegisteredUsers/weight);
 	}
 	
 	public GossipDto() {

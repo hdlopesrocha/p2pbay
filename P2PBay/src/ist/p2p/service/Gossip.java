@@ -279,7 +279,7 @@ public class Gossip extends P2PBayService {
 														fileWritter);
 												bufferWritter
 														.write(currentResult
-																.toString());
+																.toString()+"\n");
 												bufferWritter.close();
 											} catch (Exception e) {
 												e.printStackTrace();
@@ -308,15 +308,15 @@ public class Gossip extends P2PBayService {
 	}
 
 	public static int getNodeCount() {
-		return (int) lastResult.getNodeCount();
+		return (int) Math.round( lastResult.getNodeCount());
 	}
 
 	public static int getRegisteredUsers() {
-		return (int) lastResult.getRegisteredUsers();
+		return (int) Math.round(lastResult.getRegisteredUsers());
 	}
 
 	public static int getItemsOnSale() {
-		return (int) lastResult.getItemsOnSale();
+		return (int) Math.round(lastResult.getItemsOnSale());
 	}
 
 	public static void start() {

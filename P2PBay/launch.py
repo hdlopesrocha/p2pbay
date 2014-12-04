@@ -26,5 +26,8 @@ for line in node_list:
     thread.start()
     if index==0:
         time.sleep(15)
+    else:
+        time.sleep(3)
+
     index = index +1
     
