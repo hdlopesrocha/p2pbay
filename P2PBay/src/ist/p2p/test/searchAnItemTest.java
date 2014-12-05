@@ -4,7 +4,7 @@ import ist.p2p.dto.ItemDto;
 import ist.p2p.service.OfferAnItemForSaleService;
 import ist.p2p.service.SearchAnItemService;
 
-public class searchAnItem extends p2pServiceTestCase{
+public class searchAnItemTest extends p2pServiceTestCase{
 
 	/** The Constant CLIENT_USERNAME. */
 	private static final String CLIENT_OWNER = "admin";
@@ -31,11 +31,11 @@ public class searchAnItem extends p2pServiceTestCase{
 
 	private static boolean initialize = true;
 
-	public searchAnItem() {
+	public searchAnItemTest() {
 		super();
 	}
 
-	public searchAnItem(final String msg) {
+	public searchAnItemTest(final String msg) {
 		super(msg);
 	}
 
@@ -223,4 +223,5 @@ public class searchAnItem extends p2pServiceTestCase{
 	public final void tearDown() throws Exception {
 		super.tearDown();
 	}
+
 }
