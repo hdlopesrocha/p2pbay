@@ -8,61 +8,18 @@ import junit.framework.TestCase;
 
 public abstract class p2pServiceTestCase extends TestCase {
 	
-	final Random RANDOM = new Random();
+	private final Random RANDOM_MASTER = new Random();
+	private final String ip = "127.0.0.1";
 	
-	ConnectP2PBayService service = null;
-	final int port = 1025 + RANDOM.nextInt(60000);
+	protected ConnectP2PBayService serviceMaster = null;
+	protected ConnectP2PBayService servicePeer = null;
+	private final int portMaster = 1025 + RANDOM_MASTER.nextInt(2000);
 	
 	{
-		service = new ConnectP2PBayService(port);
-		service.execute();
+		serviceMaster = new ConnectP2PBayService(portMaster);
+		servicePeer = new ConnectP2PBayService(ip,portMaster);
 	}
 	
-//	static {
-//		
-//		/** The Constant RANDOM. */
-//		final Random RANDOM = new Random();
-//		final int port = 1025 + RANDOM.nextInt(60000);
-////		StorageGeneric storage = null;
-//		Peer peer = null;
-//		final Number160 myPeerId = new Number160(RANDOM);
-//		final int myPeerPort = port;
-//		final int masterPort = port;
-//		final String masterIp = "127.0.0.1";
-//		
-//		Bindings bindings=new Bindings();
-//		PeerMaker pm =new PeerMaker(myPeerId).setPorts(myPeerPort).setBindings(bindings)
-//				.setEnableIndirectReplication(true);
-////		storage = pm.getStorage();
-//		try {
-//			peer = pm.makeAndListen();
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//		peer.getConfiguration().setBehindFirewall(true);
-//		
-//		InetAddress address = null;
-//
-//		try {
-//			address = InetAddress.getByName(masterIp);
-//		} catch (UnknownHostException e) {
-//			e.printStackTrace();
-//		}
-//		
-//		{
-//			final FutureDiscover futureDiscover = peer.discover()
-//					.setInetAddress(address).setPorts(masterPort).start();
-//			futureDiscover.awaitUninterruptibly();
-//
-//			if (!futureDiscover.isSuccess()) {
-//				System.out
-//						.println("Discover with direct connection failed. Reason = "
-//								+ futureDiscover.getFailedReason());
-//				peer.shutdown();
-//			}
-//		}		
-//    }
-
 	public p2pServiceTestCase() {
 		super();
 	}
