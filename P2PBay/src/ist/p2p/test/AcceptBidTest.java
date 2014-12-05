@@ -20,6 +20,8 @@ public class AcceptBidTest extends p2pServiceTestCase {
 	private static final String DESCRIPTION = "Stuff Description";
 
 	private static final float AMOUNT = 14.99f;
+	
+	private static boolean initialize = true;
 
 	public AcceptBidTest() {
 		super();
@@ -31,25 +33,30 @@ public class AcceptBidTest extends p2pServiceTestCase {
 
 	@Override
 	public final void setUp() throws Exception {
+		init();
 		super.setUp();
 	}
+	
+	 public void init() {
+	     if(!initialize) return;
+	     initialize = false;
+
+	     serviceMaster.execute();
+	     {
+	    	 final OfferAnItemForSaleService offerAnItemForSaleService = new OfferAnItemForSaleService(
+	    			 CLIENT_OWNER, TITLE, DESCRIPTION);
+	    	 assertTrue("Oferta de um item",offerAnItemForSaleService.execute());
+	     }
+	     servicePeer.execute();
+	 }
 
 	public final void testAcceptBid() {
 
-		serviceMaster.execute();
 		String id = "";
-		{
-			final OfferAnItemForSaleService offerAnItemForSaleService = new OfferAnItemForSaleService(
-					CLIENT_OWNER, TITLE, DESCRIPTION);
-			assertTrue("Oferta de um item",offerAnItemForSaleService.execute());
 
-		}
-
-		servicePeer.execute();
 		{
 			final SearchAnItemService searchAnItemService = new SearchAnItemService(TITLE_SEARCH);
 			boolean search = searchAnItemService.execute();
-			System.out.println("Size: " + searchAnItemService.getItems().size());
 			assertTrue("Procura do item",search);
 			if (search) {
 				for (ItemDto item : searchAnItemService.getItems()) {

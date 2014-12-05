@@ -16,6 +16,8 @@ public class AuthenticationTest extends p2pServiceTestCase {
 
 	/** The Constant CLIENT_PASSWORD. */
 	private static final String CLIENT_PASSWORD_FALSE = "1111";
+	
+	private static boolean initialize = true;
 
 	public AuthenticationTest() {
 		super();
@@ -32,19 +34,26 @@ public class AuthenticationTest extends p2pServiceTestCase {
 	 */
 	@Override
 	public final void setUp() throws Exception {
+		init();
 		super.setUp();
 	}
+	
+	 public void init() {
+	     if(!initialize) return;
+	     initialize = false;
+
+	     serviceMaster.execute();
+	     {
+	    	 final RegisterUserService registerUserService = new RegisterUserService(
+	    			 CLIENT_USERNAME, CLIENT_PASSWORD);
+	    	 assertTrue("Registo de Utilizador", registerUserService.execute());
+	     }
+	     
+	     servicePeer.execute();
+	 }
 
 	public final void testRemoteLogin() {
 		
-		serviceMaster.execute();
-		{
-			final RegisterUserService registerUserService = new RegisterUserService(
-					CLIENT_USERNAME, CLIENT_PASSWORD);
-			assertTrue("Registo de Utilizador", registerUserService.execute());
-		}
-
-		servicePeer.execute();
 		{
 			AuthenticateUserService authenticateUserService = new AuthenticateUserService(
 					CLIENT_USERNAME, CLIENT_PASSWORD);
