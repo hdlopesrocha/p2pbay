@@ -1,6 +1,5 @@
 package ist.p2p;
 
-
 import ist.p2p.dto.BidDto;
 import ist.p2p.dto.ItemDto;
 import ist.p2p.dto.PurchaseDto;
@@ -16,8 +15,10 @@ import ist.p2p.service.SearchAnItemService;
 import ist.p2p.service.ViewUserHistoryService;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
 
@@ -61,32 +62,63 @@ public class Main {
 	 *             Signals that an I/O exception has occurred.
 	 */
 	public static void main(String[] args) throws IOException {
-		//ResourceLeakDetector.setLevel(Level.DISABLED);
+		// ResourceLeakDetector.setLevel(Level.DISABLED);
 		ConnectP2PBayService service;
 		final String ip = Utils.getArgValue("-i", args);
 		final String port = Utils.getArgValue("-b", args);
-		
+
 		if (ip != null) {
 			final String[] splits = ip.split(":");
-			service = new ConnectP2PBayService(splits[0],Integer.valueOf(splits[1]));
+			service = new ConnectP2PBayService(splits[0],
+					Integer.valueOf(splits[1]));
 			service.execute();
-		} else if(port!=null) {
+		} else if (port != null) {
 			service = new ConnectP2PBayService(Integer.valueOf(port));
 			service.execute();
-		}else {
+		} else {
 			System.out.println("-b <port> // for boot strap");
 			System.out.println("-i <ip:port> // connect to peer");
 			System.out.println("-u <filename> // load users file");
 			System.exit(0);
 		}
-		
+
 		final String usersFileName = Utils.getArgValue("-u", args);
 		if (usersFileName != null) {
 			loadUsersFile(usersFileName);
 		}
 		Gossip.start();
 
+		if (port!=null) {
+			new Thread(new Runnable() {
 
+				@Override
+				public void run() {
+					while (true) {
+						try {
+							Thread.sleep(100);
+							File file = new File("stat.csv");
+
+							// if file doesnt exists, then
+							// create it
+							if (!file.exists()) {
+								file.createNewFile();
+							}
+
+							// true = append file
+							FileWriter fileWritter = new FileWriter(
+									file.getName(), true);
+							BufferedWriter bufferWritter = new BufferedWriter(
+									fileWritter);
+							bufferWritter.write(Gossip.getNodeCount() + "\n");
+							bufferWritter.close();
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+
+					}
+				}
+			}).start();
+		}
 		final Scanner scanner = new Scanner(System.in);
 		while (true) {
 			commandLine(scanner);
@@ -146,7 +178,7 @@ public class Main {
 					viewItemDetailsMenu(username, scanner);
 				} else if (option == 6) {
 					viewHistoryMenu(username, scanner);
-				}  else if (option == 7) {
+				} else if (option == 7) {
 					viewManagement(username, scanner);
 				} else if (option == 0) {
 					break;
@@ -163,9 +195,9 @@ public class Main {
 	}
 
 	private static void viewManagement(String username, Scanner scanner) {
-		System.out.println("Nodes count = "+ Gossip.getNodeCount());
-		System.out.println("Users count = "+ Gossip.getRegisteredUsers());
-		System.out.println("Items on sale count = "+ Gossip.getItemsOnSale());
+		System.out.println("Nodes count = " + Gossip.getNodeCount());
+		System.out.println("Users count = " + Gossip.getRegisteredUsers());
+		System.out.println("Items on sale count = " + Gossip.getItemsOnSale());
 	}
 
 	/**

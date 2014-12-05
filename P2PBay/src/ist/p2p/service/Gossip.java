@@ -24,9 +24,7 @@ public class Gossip extends P2PBayService {
 	private static RequestP2PConfiguration CONFIG = new RequestP2PConfiguration(
 			1, 10, 0);
 	private static GossipDto currentResult = new GossipDto();
-	private static GossipDto lastResult = new GossipDto();
 	private static int consecutiveCounter = 0;
-	private static int lastPeersCount = -1;
 	private static boolean resetRequest = false;
 	private static Gossip gossip;
 
@@ -130,20 +128,22 @@ public class Gossip extends P2PBayService {
 			@Override
 			public Object reply(PeerAddress arg0, Object arg1) throws Exception {
 
-							
 				if (arg1 instanceof GossipDto) {
 					GossipDto dto = (GossipDto) arg1;
 					synchronized (currentResult) {
-					
-						
-						// someone of my wave found an anomaly (and I am the leader)
-						if(dto.isReset()){
-							if(currentResult.getWaveId() <= dto.getWaveId()){
-								lastResult = new GossipDto(currentResult);
+
+						// someone of my wave found an anomaly (and I am the
+						// leader)
+						if (dto.isReset()) {
+							if (currentResult.getWaveId() <= dto.getWaveId()) {
 								currentResult.setWeight(1);
-								currentResult.setWaveId(Math.max(currentResult.getWaveId(), dto.getWaveId())  + 1);
-								currentResult.setAvgRegisteredUsers(getUsersCountAux());
-								currentResult.setAvgItemsOnSale(getItemsOnSaleAux());
+								currentResult.setWaveId(Math.max(
+										currentResult.getWaveId(),
+										dto.getWaveId()) + 1);
+								currentResult
+										.setAvgRegisteredUsers(getUsersCountAux());
+								currentResult
+										.setAvgItemsOnSale(getItemsOnSaleAux());
 								log();
 								advertiseNeighbors();
 							}
@@ -151,17 +151,23 @@ public class Gossip extends P2PBayService {
 						}
 						// this node is outdated
 						else if (currentResult.getWaveId() < dto.getWaveId()) {
-							lastResult = new GossipDto(currentResult);
 							currentResult.setWeight(0);
-							currentResult.setAvgRegisteredUsers(getUsersCountAux());
-							currentResult.setAvgItemsOnSale(getItemsOnSaleAux());
+							currentResult
+									.setAvgRegisteredUsers(getUsersCountAux());
+							currentResult
+									.setAvgItemsOnSale(getItemsOnSaleAux());
 							currentResult.setWaveId(dto.getWaveId());
 						}
-						// equilibrium step						
-						{ 
-							currentResult.setWeight((currentResult.getWeight() + dto.getWeight()) / 2f);
-							currentResult.setAvgRegisteredUsers((currentResult.getAvgRegisteredUsers() + dto.getAvgRegisteredUsers()) / 2f);
-							currentResult.setAvgItemsOnSale((currentResult.getAvgItemsOnSale() + dto.getAvgItemsOnSale()) / 2f);
+						// equilibrium step
+						{
+							currentResult.setWeight((currentResult.getWeight() + dto
+									.getWeight()) / 2f);
+							currentResult.setAvgRegisteredUsers((currentResult
+									.getAvgRegisteredUsers() + dto
+									.getAvgRegisteredUsers()) / 2f);
+							currentResult.setAvgItemsOnSale((currentResult
+									.getAvgItemsOnSale() + dto
+									.getAvgItemsOnSale()) / 2f);
 						}
 
 						log();
@@ -172,12 +178,12 @@ public class Gossip extends P2PBayService {
 				return arg1;
 			}
 		});
+		
 		sendReset();
 		return true;
 	}
 
 	private void sendReset() {
-		lastPeersCount = -1;
 
 		new Thread(new Runnable() {
 			@Override
@@ -208,9 +214,7 @@ public class Gossip extends P2PBayService {
 						List<PeerAddress> neighbors = peer.getPeerBean()
 								.getPeerMap().getAll();
 
-						if (!resetRequest
-								&& (lastPeersCount == -1 || neighbors.size() >= lastPeersCount)) {
-							lastPeersCount = neighbors.size();
+						if (!resetRequest) {
 
 							PeerAddress address = neighbors.size() > 0 ? neighbors
 									.get(RANDOM.nextInt(neighbors.size()))
@@ -270,15 +274,21 @@ public class Gossip extends P2PBayService {
 	}
 
 	public static int getNodeCount() {
-		return (int) Math.round(lastResult.getNodeCount());
+		synchronized (currentResult) {
+			return (int) Math.round(currentResult.getNodeCount());
+		}
 	}
 
 	public static int getRegisteredUsers() {
-		return (int) Math.round(lastResult.getRegisteredUsers());
+		synchronized (currentResult) {
+			return (int) Math.round(currentResult.getRegisteredUsers());
+		}
 	}
 
 	public static int getItemsOnSale() {
-		return (int) Math.round(lastResult.getItemsOnSale());
+		synchronized (currentResult) {
+			return (int) Math.round(currentResult.getItemsOnSale());
+		}
 	}
 
 	public static void start() {

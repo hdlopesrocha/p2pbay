@@ -1,3 +1,5 @@
+ant clean
+ant jar
 cd bin
 gnome-terminal -e 'bash -c "java -jar p2pbay.jar -u ../users.txt -b 1024"' & 
 x=1
