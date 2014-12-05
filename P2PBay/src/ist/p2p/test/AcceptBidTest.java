@@ -14,6 +14,8 @@ public class AcceptBidTest extends p2pServiceTestCase {
 	private static final String CLIENT_USER_BID = "user1";
 
 	private static final String TITLE = "Stuff title";
+	
+	private static final String TITLE_SEARCH = "(and Stuff title)";
 
 	private static final String DESCRIPTION = "Stuff Description";
 
@@ -35,14 +37,19 @@ public class AcceptBidTest extends p2pServiceTestCase {
 	public final void testAcceptBid() {
 
 		serviceMaster.execute();
-		String id = null;
+		String id = "";
 		{
 			final OfferAnItemForSaleService offerAnItemForSaleService = new OfferAnItemForSaleService(
 					CLIENT_OWNER, TITLE, DESCRIPTION);
 			assertTrue("Oferta de um item",offerAnItemForSaleService.execute());
-			
-			final SearchAnItemService searchAnItemService = new SearchAnItemService(TITLE);
+
+		}
+
+		servicePeer.execute();
+		{
+			final SearchAnItemService searchAnItemService = new SearchAnItemService(TITLE_SEARCH);
 			boolean search = searchAnItemService.execute();
+			System.out.println("Size: " + searchAnItemService.getItems().size());
 			assertTrue("Procura do item",search);
 			if (search) {
 				for (ItemDto item : searchAnItemService.getItems()) {
@@ -51,15 +58,12 @@ public class AcceptBidTest extends p2pServiceTestCase {
 					}
 				}
 			}
-			assertNotNull("Nao encontrou o item", id);
-
+			assertFalse("Nao encontrou o item",id.equals(""));
+			
 			final BidAnItemService bidAnItemService = new BidAnItemService(
 					CLIENT_USER_BID, id, AMOUNT);
 			assertTrue("Oferta de uma licitacao",bidAnItemService.execute());
-		}
-
-		servicePeer.execute();
-		{
+			
 			final AcceptBidService acceptBidService = new AcceptBidService(
 					CLIENT_OWNER, id);
 			assertTrue("Aceitar a licitacao",acceptBidService.execute());
