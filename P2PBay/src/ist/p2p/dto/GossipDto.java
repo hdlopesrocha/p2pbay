@@ -29,8 +29,9 @@ public class GossipDto implements Serializable {
 		this.waveId = waveId;
 	}
 
-	public void setReset(){
+	public GossipDto setReset(){
 		this.reset = true;
+		return this;
 	}
 	
 	public boolean isReset(){
@@ -80,10 +81,10 @@ public class GossipDto implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = -6867433225365269043L;
-	private static double DELTA = 0.000001d;
+	private static double DELTA = 0.0000001d;
 	
 	public String toString(){
-		return  waveId+","+(1/weight)+ ","+(avgItemsOnSale/weight)+ ","+(avgRegisteredUsers/weight);
+		return  waveId+","+(weight)+","+(1/weight)+ ","+(avgRegisteredUsers)+ ","+(avgRegisteredUsers/weight);
 	}
 	
 	public GossipDto() {

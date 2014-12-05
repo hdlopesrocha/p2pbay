@@ -23,7 +23,6 @@ import net.tomp2p.storage.StorageGeneric;
 public class Gossip extends P2PBayService {
 	private static RequestP2PConfiguration CONFIG = new RequestP2PConfiguration(
 			1, 10, 0);
-	private static boolean isLeader = false;
 	private static GossipDto currentResult = new GossipDto();
 	private static GossipDto lastResult = new GossipDto();
 	private static int consecutiveCounter = 0;
@@ -103,94 +102,78 @@ public class Gossip extends P2PBayService {
 		return userCount;
 	}
 
+	private void log() {
+		try {
+			File file = new File("data.csv");
+
+			// if file doesnt exists, then
+			// create it
+			if (!file.exists()) {
+				file.createNewFile();
+			}
+
+			// true = append file
+			FileWriter fileWritter = new FileWriter(file.getName(), true);
+			BufferedWriter bufferWritter = new BufferedWriter(fileWritter);
+			bufferWritter.write(currentResult.toString() + "\n");
+			bufferWritter.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
 	@Override
 	public boolean execute() {
 		// System.out.println("LAUNCH GOSSIP");
 		peer.setObjectDataReply(new ObjectDataReply() {
 			@Override
 			public Object reply(PeerAddress arg0, Object arg1) throws Exception {
-				if (arg1 instanceof Number160) {
-					Number160 receivedNumber = (Number160) arg1;
-					if (Number160.ONE.equals(receivedNumber)) {
-						if (!isLeader) {
-							// i am the leader!
-							isLeader = true;
-							synchronized (currentResult) {
-								lastResult = new GossipDto(currentResult);
-								currentResult.setWeight(1);
-								currentResult.setWaveId(currentResult
-										.getWaveId() + 1);
-								currentResult
-										.setAvgRegisteredUsers(getUsersCountAux());
-								currentResult
-										.setAvgItemsOnSale(getItemsOnSaleAux());
 
-							}
-							advertiseNeighbors();
-						}
-					} else {
-						isLeader = false;
-					}
-				} else if (arg1 instanceof GossipDto) {
+							
+				if (arg1 instanceof GossipDto) {
 					GossipDto dto = (GossipDto) arg1;
 					synchronized (currentResult) {
-
-						if (currentResult.getWaveId() < dto.getWaveId()) {
+					
+						
+						// someone of my wave found an anomaly (and I am the leader)
+						if(dto.isReset()){
+							if(currentResult.getWaveId() <= dto.getWaveId()){
+								lastResult = new GossipDto(currentResult);
+								currentResult.setWeight(1);
+								currentResult.setWaveId(Math.max(currentResult.getWaveId(), dto.getWaveId())  + 1);
+								currentResult.setAvgRegisteredUsers(getUsersCountAux());
+								currentResult.setAvgItemsOnSale(getItemsOnSaleAux());
+								log();
+								advertiseNeighbors();
+							}
+							return dto;
+						}
+						// this node is outdated
+						else if (currentResult.getWaveId() < dto.getWaveId()) {
 							lastResult = new GossipDto(currentResult);
 							currentResult.setWeight(0);
-							currentResult
-									.setAvgRegisteredUsers(getUsersCountAux());
-							currentResult
-									.setAvgItemsOnSale(getItemsOnSaleAux());
-
+							currentResult.setAvgRegisteredUsers(getUsersCountAux());
+							currentResult.setAvgItemsOnSale(getItemsOnSaleAux());
+							currentResult.setWaveId(dto.getWaveId());
+						}
+						// equilibrium step						
+						{ 
+							currentResult.setWeight((currentResult.getWeight() + dto.getWeight()) / 2f);
+							currentResult.setAvgRegisteredUsers((currentResult.getAvgRegisteredUsers() + dto.getAvgRegisteredUsers()) / 2f);
+							currentResult.setAvgItemsOnSale((currentResult.getAvgItemsOnSale() + dto.getAvgItemsOnSale()) / 2f);
 						}
 
-						double newWeight = (currentResult.getWeight() + dto
-								.getWeight()) / 2f;
-						currentResult.setWeight(newWeight);
-						currentResult.setWaveId(dto.getWaveId());
-						currentResult.setAvgRegisteredUsers((currentResult
-								.getAvgRegisteredUsers() + dto
-								.getAvgRegisteredUsers()) / 2f);
-						currentResult.setAvgItemsOnSale((currentResult
-								.getAvgItemsOnSale() + dto.getAvgItemsOnSale()) / 2f);
-
+						log();
+						advertiseNeighbors();
+						return new GossipDto(currentResult);
 					}
-					advertiseNeighbors();
-
 				}
-				GossipDto ret = null;
-				synchronized (currentResult) {
-					ret = new GossipDto(currentResult);
-				}
-				return ret;
+				return arg1;
 			}
 		});
-		chooseLeader();
+		sendReset();
 		return true;
-	}
-
-	private void chooseLeader() {
-
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				while (true) {
-					// System.out.println("CHOOSE LEADER");
-					FutureDHT future = peer.send(Number160.ZERO)
-							.setObject(Number160.ONE)
-							.setRequestP2PConfiguration(CONFIG).start();
-					future.awaitUninterruptibly();
-
-					try {
-						Thread.sleep(1000);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-		}).start();
-
 	}
 
 	private void sendReset() {
@@ -200,10 +183,13 @@ public class Gossip extends P2PBayService {
 			@Override
 			public void run() {
 				// System.out.println("RESET");
-				FutureDHT future = peer.send(Number160.ZERO)
-						.setObject(Number160.ZERO)
-						.setRequestP2PConfiguration(CONFIG).start();
-				future.awaitUninterruptibly();
+				synchronized (currentResult) {
+					FutureDHT future = peer.send(Number160.ZERO)
+							.setObject(new GossipDto(currentResult).setReset())
+							.setRequestP2PConfiguration(CONFIG).start();
+					future.awaitUninterruptibly();
+					resetRequest = false;
+				}
 			}
 		}).start();
 	}
@@ -249,7 +235,7 @@ public class Gossip extends P2PBayService {
 											consecutiveCounter = 0;
 										}
 
-										if (consecutiveCounter >= 32) {
+										if (consecutiveCounter >= 64) {
 											// System.out.println("CONVERGED! "+
 											// currentResult.toString());
 											consecutiveCounter = 0;
@@ -262,29 +248,6 @@ public class Gossip extends P2PBayService {
 													.getAvgRegisteredUsers());
 											currentResult.setAvgItemsOnSale(myW
 													.getAvgItemsOnSale());
-
-											try {
-												File file = new File("data.txt");
-
-												// if file doesnt exists, then
-												// create it
-												if (!file.exists()) {
-													file.createNewFile();
-												}
-
-												// true = append file
-												FileWriter fileWritter = new FileWriter(
-														file.getName(), true);
-												BufferedWriter bufferWritter = new BufferedWriter(
-														fileWritter);
-												bufferWritter
-														.write(currentResult
-																.toString()+"\n");
-												bufferWritter.close();
-											} catch (Exception e) {
-												e.printStackTrace();
-											}
-
 										}
 									}
 
@@ -294,7 +257,6 @@ public class Gossip extends P2PBayService {
 
 						} else {
 							sendReset();
-							resetRequest = false;
 							break;
 						}
 
@@ -308,7 +270,7 @@ public class Gossip extends P2PBayService {
 	}
 
 	public static int getNodeCount() {
-		return (int) Math.round( lastResult.getNodeCount());
+		return (int) Math.round(lastResult.getNodeCount());
 	}
 
 	public static int getRegisteredUsers() {

@@ -1,4 +1,4 @@
-import subprocess
+﻿import subprocess
 import os
 import socket
 import time
@@ -17,7 +17,7 @@ def threaded_function(index,hostname):
         java_cmd = "java -jar p2pbay.jar -b " + bootPort +" -u users.txt"
     else :
         java_cmd = "java -jar p2pbay.jar -i "+bootIp+":"+bootPort
-    cmd = "gnome-terminal -e 'ssh -i .ssh/id_rsa -t istple_seprs6@"+hostname+ " \"wget -N web.ist.utl.pt/ist168621/setup.sh; sh setup.sh;"+java_cmd+" ;bash\"'"
+    cmd = "gnome-terminal -e 'ssh -i .ssh/id_rsa -t istple_seprs6@"+hostname+ " \"rm data.txt; wget -N web.ist.utl.pt/ist168621/setup.sh; sh setup.sh;"+java_cmd+" ;bash\"'"
     os.system(cmd)
 
 index = 0
@@ -27,7 +27,7 @@ for line in node_list:
     if index==0:
         time.sleep(15)
     else:
-        time.sleep(3)
+        time.sleep(1)
 
     index = index +1
     
